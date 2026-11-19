@@ -1,0 +1,25 @@
+# ---- Arquivos grandes ou regeneráveis ----
+*.pdf
+saidas/*.csv
+saidas/*.json
+
+# ---- Dados brutos e cópias de trabalho ----
+dados/brutos/
+.here
+
+# ---- Anotações internas de trabalho ----
+AGENTS.md
+spec.md
+
+# ---- Sistema ----
+Thumbs.db
+desktop.ini
+.DS_Store
+~$*
+
+# ---- R ----
+.Rproj.user/
+.Rhistory
+.RData
+.Rapp.history
+renv/library/

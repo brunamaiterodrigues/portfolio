@@ -1,0 +1,2868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pizzaria do Vitto — Painel de vendas</title>
+<style>
+  :root{
+    --navy:#1B2A4A;
+    --navy-soft:#2C3E63;
+    --coral:#E14B3E;
+    --coral-dark:#B93A30;
+    --blush:#F6DCD8;
+    --sand:#F3F0EA;
+    --ink:#1E1E1E;
+    --gray:#5F6368;
+    --line:#D9D9D9;
+    --bg:#FFFFFF;
+    --white:#FFFFFF;
+    --ok:#2F6B4F;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Source Sans 3","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+    font-size:16px;
+    line-height:1.5;
+  }
+  h1,h2,h3,h4{font-family:"Archivo","Segoe UI",system-ui,Arial,sans-serif;margin:0}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+  /* ---------- Cabeçalho ---------- */
+  header.topo{
+    border-bottom:1px solid var(--line);
+    padding:34px 0 26px;
+  }
+  .marca{
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--coral);font-weight:700;font-family:"Archivo",sans-serif;
+  }
+  header.topo h1{
+    font-size:clamp(28px,4vw,44px);
+    line-height:1.08;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    color:var(--navy);
+    margin:10px 0 10px;
+  }
+  header.topo p{margin:0;color:var(--gray);max-width:70ch}
+  .barra-coral{height:6px;background:var(--coral);width:96px;margin:18px 0 0}
+
+  /* ---------- Abas ---------- */
+  nav.abas{
+    position:sticky;top:0;z-index:20;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.abas .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:10px;padding-bottom:10px}
+  nav.abas button{
+    border:0;background:transparent;color:var(--gray);
+    font-family:"Archivo",sans-serif;font-size:13px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.06em;
+    padding:10px 14px;cursor:pointer;white-space:nowrap;border-radius:2px;
+  }
+  nav.abas button:hover{color:var(--navy);background:var(--sand)}
+  nav.abas button[aria-selected="true"]{color:var(--white);background:var(--navy)}
+
+  /* ---------- Seções ---------- */
+  section.painel{display:none;padding:34px 0 60px}
+  section.painel.ativo{display:block}
+  .secao-titulo{
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--gray);font-weight:700;margin-bottom:6px;
+    font-family:"Archivo",sans-serif;
+  }
+  h2.titulo{font-size:clamp(22px,2.6vw,30px);color:var(--navy);margin-bottom:8px;line-height:1.2}
+  p.descricao{color:var(--gray);max-width:78ch;margin:0 0 26px}
+
+  /* ---------- Cartões de KPI ---------- */
+  .grade-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:28px}
+  .kpi{border:1px solid var(--line);border-top:3px solid var(--navy);padding:20px 20px 18px;background:var(--white)}
+  .kpi.destaque{border-top-color:var(--coral)}
+  .kpi .rotulo{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);font-weight:700}
+  .kpi .valor{font-family:"Archivo",sans-serif;font-size:30px;font-weight:700;color:var(--navy);line-height:1.15;margin:8px 0 4px}
+  .kpi .faixa{font-size:13px;color:var(--gray)}
+  .kpi .base{font-size:12px;color:var(--gray);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+
+  /* ---------- Blocos ---------- */
+  .bloco{border:1px solid var(--line);padding:22px 22px 18px;margin-bottom:22px;background:var(--white)}
+  .bloco h3{font-size:17px;color:var(--navy);margin-bottom:4px}
+  .bloco .subtitulo{font-size:13px;color:var(--gray);margin:0 0 16px}
+  .duas-colunas{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:900px){.duas-colunas{grid-template-columns:1fr}}
+
+  .nota{
+    border-left:4px solid var(--coral);background:var(--blush);
+    padding:14px 18px;font-size:14px;color:#5a2b26;margin:18px 0 0;
+  }
+  .nota-azul{border-left-color:var(--navy);background:#EEF1F7;color:#22304d}
+  .aviso-limite{
+    border-left:4px solid var(--gray);background:var(--sand);
+    padding:14px 18px;font-size:14px;color:#403f3d;margin-top:18px;
+  }
+  .aviso-limite b{color:var(--navy)}
+
+  /* ---------- Tabelas ---------- */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{
+    text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--gray);border-bottom:1px solid var(--navy);padding:8px 10px;font-weight:700;
+  }
+  tbody td{padding:9px 10px;border-bottom:1px solid #ECECEC}
+  tbody tr:hover{background:#FAF9F6}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* ---------- Gráficos ---------- */
+  svg{display:block;width:100%;height:auto;overflow:visible}
+  .eixo text{font-size:11px;fill:var(--gray)}
+  .rotulo-barra{font-size:11px;fill:var(--navy);font-weight:600}
+  .grade-linha{stroke:#ECECEC;stroke-width:1}
+  .barra{fill:var(--navy)}
+  .barra.coral{fill:var(--coral)}
+  .barra.clara{fill:#C9D1E0}
+  .faixa-ci{stroke:var(--ink);stroke-width:1.2}
+  .legenda{font-size:12px;color:var(--gray);margin-top:10px}
+  .legenda span{display:inline-flex;align-items:center;gap:6px;margin-right:16px}
+  .amostra-cor{width:12px;height:12px;display:inline-block}
+
+  /* ---------- Comparação ---------- */
+  .linha-comp{display:grid;grid-template-columns:200px 1fr 150px;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid #ECECEC}
+  @media(max-width:760px){.linha-comp{grid-template-columns:1fr}}
+  .linha-comp .nome{font-size:14px;font-weight:600;color:var(--navy)}
+  .comparativo{display:flex;flex-direction:column;gap:6px}
+  .barra-comp{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray)}
+  .barra-comp .preench{height:12px;background:var(--navy)}
+  .barra-comp.ano2026 .preench{background:var(--coral)}
+  .barra-comp .valor{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+
+  /* ---------- Chat ---------- */
+  #botao-chat{
+    position:fixed;right:24px;bottom:24px;z-index:60;
+    background:var(--coral);color:#fff;border:0;border-radius:999px;
+    padding:14px 22px;font-family:"Archivo",sans-serif;font-weight:700;font-size:14px;
+    cursor:pointer;box-shadow:0 8px 24px rgba(27,42,74,.28);
+  }
+  #botao-chat:hover{background:var(--coral-dark)}
+  #painel-chat{
+    position:fixed;right:24px;bottom:92px;z-index:61;
+    width:min(420px,calc(100vw - 32px));height:min(620px,calc(100vh - 140px));
+    background:#fff;border:1px solid var(--line);
+    box-shadow:0 18px 50px rgba(27,42,74,.25);
+    display:none;flex-direction:column;
+  }
+  #painel-chat.aberto{display:flex}
+  .chat-topo{background:var(--navy);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+  .chat-topo h4{font-size:14px;text-transform:uppercase;letter-spacing:.08em}
+  .chat-topo button{background:transparent;border:0;color:#fff;font-size:20px;cursor:pointer;line-height:1}
+  #chat-mensagens{flex:1;overflow-y:auto;padding:16px;background:#FAFAF8}
+  .msg{margin-bottom:14px;font-size:14px;line-height:1.5;max-width:92%}
+  .msg.agente{background:#fff;border:1px solid var(--line);border-left:3px solid var(--navy);padding:10px 12px}
+  .msg.usuario{background:var(--coral);color:#fff;margin-left:auto;padding:10px 12px}
+  .msg .fontes{display:block;margin-top:8px;font-size:11px;color:var(--gray)}
+  .msg table{margin-top:8px;font-size:12px}
+  .msg .faixa-mini{font-size:12px;color:var(--gray)}
+  #chat-form{display:flex;border-top:1px solid var(--line);background:#fff}
+  #chat-input{flex:1;border:0;padding:14px;font-size:14px;font-family:inherit;outline:none}
+  #chat-form button{border:0;background:var(--navy);color:#fff;padding:0 20px;cursor:pointer;font-family:"Archivo",sans-serif;font-weight:700}
+  #chat-sugestoes{
+    padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;
+    border-top:1px solid var(--line);background:#fff;
+    max-height:82px;overflow-y:auto;
+  }
+  #chat-sugestoes button{
+    border:1px solid var(--line);background:#fff;color:var(--navy);
+    font-size:11px;padding:5px 9px;cursor:pointer;border-radius:2px;font-family:inherit;
+  }
+  #chat-sugestoes button:hover{border-color:var(--coral);color:var(--coral)}
+
+  /* ---------- Rodapé ---------- */
+  footer{border-top:1px solid var(--line);padding:26px 0 60px;color:var(--gray);font-size:13px}
+  footer h4{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--navy);margin-bottom:10px}
+  .tecnico{font-size:12px;line-height:1.6;max-width:100ch}
+  .metodo{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-top:10px}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="wrap">
+    <div class="marca">Pizzaria do Vitto</div>
+    <h1>Painel de vendas</h1>
+    <p id="subtitulo-topo"></p>
+    <div class="barra-coral"></div>
+  </div>
+</header>
+
+<nav class="abas" aria-label="Seções do painel">
+  <div class="wrap" role="tablist">
+    <button role="tab" aria-selected="true"  data-painel="visao">Visão geral</button>
+    <button role="tab" aria-selected="false" data-painel="ritmo">Ritmo</button>
+    <button role="tab" aria-selected="false" data-painel="mix">O que vendemos</button>
+    <button role="tab" aria-selected="false" data-painel="precos">Preços</button>
+    <button role="tab" aria-selected="false" data-painel="comparacao">2025 e 2026</button>
+    <button role="tab" aria-selected="false" data-painel="previsao">Previsão</button>
+    <button role="tab" aria-selected="false" data-painel="qualidade">Dados e limites</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ============ VISÃO GERAL ============ -->
+  <section class="painel ativo" id="painel-visao">
+    <div class="secao-titulo">Visão geral</div>
+    <h2 class="titulo">O tamanho do negócio no período</h2>
+    <p class="descricao">
+      Números do período completo, de 01/01/2025 a 03/08/2026. Os totais são o que aconteceu;
+      as faixas prováveis aparecem só nos indicadores de média, que são estimativas.
+    </p>
+
+    <div class="grade-kpi" id="kpis"></div>
+
+    <div class="bloco">
+      <h3>Faturamento mês a mês</h3>
+      <p class="subtitulo">Cada barra é um mês. Os meses com poucos dias registrados aparecem mais baixos por falta de registro, não necessariamente por menos venda.</p>
+      <div id="grafico-mensal"></div>
+      <div class="legenda">
+        <span><i class="amostra-cor" style="background:var(--navy)"></i>Faturamento do mês</span>
+      </div>
+    </div>
+
+    <div class="nota">
+      <b>Como ler as faixas prováveis.</b> Uma faixa provável mostra a margem de variação de um número estimado.
+      Se o mesmo processo de vendas fosse observado em outro conjunto parecido de dias, o valor tenderia a cair dentro de uma faixa como esta.
+      Não é garantia e não significa "95% de chance de o valor estar aqui".
+    </div>
+  </section>
+
+  <!-- ============ RITMO ============ -->
+  <section class="painel" id="painel-ritmo">
+    <div class="secao-titulo">Ritmo</div>
+    <h2 class="titulo">Quando as vendas acontecem</h2>
+    <p class="descricao">
+      Médias calculadas apenas nos dias com registro. Dividir pelos 580 dias corridos daria um número menor e falso,
+      porque dias sem registro não são dias sem venda.
+    </p>
+
+    <div class="duas-colunas">
+      <div class="bloco">
+        <h3>Pedidos por dia da semana</h3>
+        <p class="subtitulo">Média por dia com registro. O traço vertical é a faixa provável de 95%.</p>
+        <div id="grafico-dias"></div>
+        <div class="legenda"><span><i class="amostra-cor" style="background:var(--navy)"></i>Média de pedidos</span></div>
+      </div>
+      <div class="bloco">
+        <h3>Pedidos por hora do dia</h3>
+        <p class="subtitulo">Hora em que o pedido foi registrado, não a hora da entrega.</p>
+        <div id="grafico-horas"></div>
+        <div class="legenda"><span><i class="amostra-cor" style="background:var(--coral)"></i>Pedidos na hora</span></div>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h3>Pedidos por faixa de horário</h3>
+      <p class="subtitulo">Participação de cada faixa no total de pedidos do período.</p>
+      <div id="tabela-faixas"></div>
+    </div>
+
+    <div class="aviso-limite">
+      <b>O que não dá para concluir:</b> a base não tem tempo de entrega nem tempo de preparo, então não é possível saber se um horário de pico
+      significa cozinha sobrecarregada. Dias sem registro podem ser folga planejada ou falha de anotação — a base não distingue os dois casos.
+    </div>
+  </section>
+
+  <!-- ============ MIX ============ -->
+  <section class="painel" id="painel-mix">
+    <div class="secao-titulo">O que vendemos</div>
+    <h2 class="titulo">Tamanhos, categorias e sabores</h2>
+    <p class="descricao">
+      Participação em pizzas vendidas, não em pedidos. As faixas de participação são aproximadas, porque várias pizzas
+      do mesmo pedido não são independentes entre si.
+    </p>
+
+    <div class="duas-colunas">
+      <div class="bloco">
+        <h3>Participação por tamanho</h3>
+        <p class="subtitulo">Quantas pizzas de cada tamanho, em cada 100 pizzas vendidas.</p>
+        <div id="grafico-tamanhos"></div>
+      </div>
+      <div class="bloco">
+        <h3>Participação por categoria</h3>
+        <p class="subtitulo">Clássica, Especial, Vegetariana e Frango.</p>
+        <div id="grafico-categorias"></div>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h3>Sabores mais vendidos</h3>
+      <p class="subtitulo" id="subtitulo-sabores"></p>
+      <div id="grafico-sabores"></div>
+      <div class="legenda"><span><i class="amostra-cor" style="background:var(--navy)"></i>Pizzas vendidas</span></div>
+    </div>
+
+    <div class="bloco">
+      <h3>Tabela completa de sabores</h3>
+      <p class="subtitulo">Ordenada por pizzas vendidas. O faturamento é receita, não lucro.</p>
+      <div style="max-height:420px;overflow:auto"><div id="tabela-sabores"></div></div>
+    </div>
+
+    <div class="aviso-limite">
+      <b>O que não dá para concluir:</b> popularidade não é rentabilidade. A base não tem custo por sabor, então não dá para dizer
+      qual sabor deixa mais margem. A participação também pode refletir promoção e posição no cardápio, não preferência do cliente.
+    </div>
+  </section>
+
+  <!-- ============ PREÇOS ============ -->
+  <section class="painel" id="painel-precos">
+    <div class="secao-titulo">Preços</div>
+    <h2 class="titulo">O que os preços praticados mostram</h2>
+    <p class="descricao">
+      O preço varia por sabor, tamanho e promoção. O valor médio de cada tamanho não é o preço de cardápio:
+      é a média do que foi efetivamente cobrado.
+    </p>
+
+    <div class="bloco">
+      <h3>Amplitude de preço por tamanho</h3>
+      <p class="subtitulo">A barra vai do menor ao maior preço unitário registrado. O ponto marca o valor típico (metade dos registros acima, metade abaixo).</p>
+      <div id="grafico-precos"></div>
+      <div class="legenda">
+        <span><i class="amostra-cor" style="background:var(--navy)"></i>Amplitude mínima e máxima</span>
+        <span><i class="amostra-cor" style="background:var(--coral);border-radius:50%"></i>Valor típico</span>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h3>Preço por tamanho, em detalhe</h3>
+      <div id="tabela-precos"></div>
+    </div>
+
+    <div class="aviso-limite">
+      <b>O que não dá para concluir:</b> preço não é margem. Sem custo dos ingredientes e sem custo operacional,
+      não é possível saber quanto sobra de cada pizza vendida. Também não dá para separar o efeito de promoção do preço de tabela.
+    </div>
+  </section>
+
+  <!-- ============ COMPARAÇÃO ============ -->
+  <section class="painel" id="painel-comparacao">
+    <div class="secao-titulo">2025 e 2026</div>
+    <h2 class="titulo">Os dois anos, no mesmo intervalo do calendário</h2>
+    <p class="descricao" id="descricao-comparacao"></p>
+
+    <div class="grade-kpi" id="kpis-comparacao"></div>
+
+    <div class="bloco">
+      <h3>Médias lado a lado</h3>
+      <p class="subtitulo">Comparação por média diária e por pedido, que não dependem do número de dias registrados.</p>
+      <div id="comparacao-medias"></div>
+    </div>
+
+    <div class="bloco">
+      <h3>Cobertura de registro em cada ano</h3>
+      <div id="tabela-cobertura"></div>
+    </div>
+
+    <div class="aviso-limite">
+      <b>O que não dá para concluir:</b> os valores estão em reais correntes e não descontam inflação.
+      Em 2026 há bem menos dias registrados no mesmo intervalo, então comparar totais brutos diria mais sobre a anotação do que sobre as vendas.
+      Uma diferença dentro da faixa provável pode ser apenas variação normal.
+    </div>
+  </section>
+
+  <!-- ============ PREVISÃO ============ -->
+  <section class="painel" id="painel-previsao">
+    <div class="secao-titulo">Previsão</div>
+    <h2 class="titulo">Estimativa para as próximas 12 semanas</h2>
+    <p class="descricao" id="descricao-previsao"></p>
+
+    <div class="grade-kpi" id="kpis-previsao"></div>
+
+    <div class="bloco">
+      <h3>Receita média por dia registrado, semana a semana</h3>
+      <p class="subtitulo">A linha cheia é o que aconteceu. A linha tracejada é a estimativa. A faixa sombreada é a faixa provável de 95%.</p>
+      <div id="grafico-previsao"></div>
+      <div class="legenda">
+        <span><i class="amostra-cor" style="background:var(--navy)"></i>Observado</span>
+        <span><i class="amostra-cor" style="background:var(--coral)"></i>Estimativa</span>
+        <span><i class="amostra-cor" style="background:rgba(225,75,62,.22)"></i>Faixa provável</span>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h3>Semana a semana</h3>
+      <div id="tabela-previsao"></div>
+    </div>
+
+    <div class="aviso-limite">
+      <b>O que não dá para concluir:</b> a estimativa assume que o padrão das últimas semanas continua.
+      Feriados, férias, mudança de cardápio, nova concorrência ou reajuste de preço não estão no modelo.
+      O período cobre menos de dois anos completos, então não foi possível estimar um padrão anual que se repete.
+    </div>
+  </section>
+
+  <!-- ============ DADOS E LIMITES ============ -->
+  <section class="painel" id="painel-qualidade">
+    <div class="secao-titulo">Dados e limites</div>
+    <h2 class="titulo">O que a base permite e o que ela não permite</h2>
+    <p class="descricao">Transparência sobre a origem dos números, os problemas conhecidos e as decisões de tratamento.</p>
+
+    <div class="grade-kpi" id="kpis-qualidade"></div>
+
+    <div class="bloco">
+      <h3>Problemas conhecidos e como foram tratados</h3>
+      <div id="tabela-qualidade"></div>
+    </div>
+
+    <div class="bloco">
+      <h3>Perguntas que estes dados não respondem</h3>
+      <div id="tabela-nao-responde"></div>
+    </div>
+
+    <div class="bloco">
+      <h3>Como os números foram calculados</h3>
+      <div class="tecnico" id="metodo"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <h4>Sobre este painel</h4>
+    <p class="tecnico" id="rodape-texto"></p>
+  </div>
+</footer>
+
+<button id="botao-chat" type="button" aria-expanded="false" aria-controls="painel-chat">Perguntar sobre os dados</button>
+
+<aside id="painel-chat" role="dialog" aria-label="Assistente de dados">
+  <div class="chat-topo">
+    <h4>Assistente de dados</h4>
+    <button id="fechar-chat" type="button" aria-label="Fechar">×</button>
+  </div>
+  <div id="chat-mensagens" aria-live="polite"></div>
+  <div id="chat-sugestoes"></div>
+  <form id="chat-form">
+    <input id="chat-input" type="text" placeholder="Ex.: qual o valor médio por pedido?" autocomplete="off" aria-label="Sua pergunta">
+    <button type="submit">Enviar</button>
+  </form>
+</aside>
+
+<script id="dados" type="application/json">{
+  "meta": {
+    "periodo_inicio": "01/01/2025",
+    "periodo_fim": "03/08/2026",
+    "dias_corridos": 580,
+    "dias_registro": 358,
+    "linhas": 48620,
+    "pedidos": 21350,
+    "gerado_em": "19/11/2026 19:57",
+    "fonte": "dados do vitto.csv (somente leitura)"
+  },
+  "kpis": {
+    "faturamento_total": 4089300.25,
+    "pedidos_total": 21350,
+    "pizzas_total": 49574,
+    "dias_registro": 358,
+    "preco_por_pizza": 82.48881,
+    "ticket": {
+      "valor": 191.536311,
+      "li": 189.480737,
+      "ls": 193.591886,
+      "n": 21350
+    },
+    "pizzas_por_pedido": {
+      "valor": 2.321967,
+      "li": 2.297477,
+      "ls": 2.346458,
+      "n": 21350
+    },
+    "media_diaria": {
+      "valor": 11422.626397,
+      "li": 11212.367814,
+      "ls": 11632.884979,
+      "n": 358
+    },
+    "pedidos_por_dia": {
+      "valor": 59.636872,
+      "li": 58.595787,
+      "ls": 60.677956,
+      "n": 358
+    }
+  },
+  "mensal": [
+    {
+      "mes": "2025-01",
+      "rotulo": "jan/25",
+      "dias": 20,
+      "faturamento": 228818.25,
+      "pedidos": 1201,
+      "pizzas": 2765,
+      "media_diaria": 11440.9125
+    },
+    {
+      "mes": "2025-02",
+      "rotulo": "fev/25",
+      "dias": 18,
+      "faturamento": 206797.75,
+      "pedidos": 1100,
+      "pizzas": 2522,
+      "media_diaria": 11488.763889
+    },
+    {
+      "mes": "2025-03",
+      "rotulo": "mar/25",
+      "dias": 19,
+      "faturamento": 212160.75,
+      "pedidos": 1099,
+      "pizzas": 2579,
+      "media_diaria": 11166.355263
+    },
+    {
+      "mes": "2025-04",
+      "rotulo": "abr/25",
+      "dias": 19,
+      "faturamento": 223207.25,
+      "pedidos": 1140,
+      "pizzas": 2707,
+      "media_diaria": 11747.75
+    },
+    {
+      "mes": "2025-05",
+      "rotulo": "mai/25",
+      "dias": 19,
+      "faturamento": 215464,
+      "pedidos": 1139,
+      "pizzas": 2608,
+      "media_diaria": 11340.210526
+    },
+    {
+      "mes": "2025-06",
+      "rotulo": "jun/25",
+      "dias": 19,
+      "faturamento": 222603.75,
+      "pedidos": 1141,
+      "pizzas": 2673,
+      "media_diaria": 11715.986842
+    },
+    {
+      "mes": "2025-07",
+      "rotulo": "jul/25",
+      "dias": 20,
+      "faturamento": 224875.5,
+      "pedidos": 1194,
+      "pizzas": 2743,
+      "media_diaria": 11243.775
+    },
+    {
+      "mes": "2025-08",
+      "rotulo": "ago/25",
+      "dias": 19,
+      "faturamento": 221109,
+      "pedidos": 1139,
+      "pizzas": 2667,
+      "media_diaria": 11637.315789
+    },
+    {
+      "mes": "2025-09",
+      "rotulo": "set/25",
+      "dias": 19,
+      "faturamento": 212055.75,
+      "pedidos": 1120,
+      "pizzas": 2548,
+      "media_diaria": 11160.828947
+    },
+    {
+      "mes": "2025-10",
+      "rotulo": "out/25",
+      "dias": 20,
+      "faturamento": 237146.75,
+      "pedidos": 1249,
+      "pizzas": 2868,
+      "media_diaria": 11857.3375
+    },
+    {
+      "mes": "2025-11",
+      "rotulo": "nov/25",
+      "dias": 18,
+      "faturamento": 204926.75,
+      "pedidos": 1073,
+      "pizzas": 2471,
+      "media_diaria": 11384.819444
+    },
+    {
+      "mes": "2025-12",
+      "rotulo": "dez/25",
+      "dias": 20,
+      "faturamento": 227060,
+      "pedidos": 1237,
+      "pizzas": 2787,
+      "media_diaria": 11353
+    },
+    {
+      "mes": "2026-01",
+      "rotulo": "jan/26",
+      "dias": 19,
+      "faturamento": 203861,
+      "pedidos": 1079,
+      "pizzas": 2481,
+      "media_diaria": 10729.526316
+    },
+    {
+      "mes": "2026-02",
+      "rotulo": "fev/26",
+      "dias": 17,
+      "faturamento": 195808.5,
+      "pedidos": 1029,
+      "pizzas": 2379,
+      "media_diaria": 11518.147059
+    },
+    {
+      "mes": "2026-03",
+      "rotulo": "mar/26",
+      "dias": 17,
+      "faturamento": 194363,
+      "pedidos": 999,
+      "pizzas": 2353,
+      "media_diaria": 11433.117647
+    },
+    {
+      "mes": "2026-04",
+      "rotulo": "abr/26",
+      "dias": 16,
+      "faturamento": 193493,
+      "pedidos": 994,
+      "pizzas": 2346,
+      "media_diaria": 12093.3125
+    },
+    {
+      "mes": "2026-05",
+      "rotulo": "mai/26",
+      "dias": 20,
+      "faturamento": 225314.25,
+      "pedidos": 1143,
+      "pizzas": 2738,
+      "media_diaria": 11265.7125
+    },
+    {
+      "mes": "2026-06",
+      "rotulo": "jun/26",
+      "dias": 19,
+      "faturamento": 232823,
+      "pedidos": 1194,
+      "pizzas": 2821,
+      "media_diaria": 12253.842105
+    },
+    {
+      "mes": "2026-07",
+      "rotulo": "jul/26",
+      "dias": 18,
+      "faturamento": 186143,
+      "pedidos": 975,
+      "pizzas": 2258,
+      "media_diaria": 10341.277778
+    },
+    {
+      "mes": "2026-08",
+      "rotulo": "ago/26",
+      "dias": 2,
+      "faturamento": 21269,
+      "pedidos": 105,
+      "pizzas": 260,
+      "media_diaria": 10634.5
+    }
+  ],
+  "dia_semana": [
+    {
+      "dia_semana_num": 1,
+      "dia": "Domingo",
+      "n_dias": 49,
+      "pedidos_media": 58.571429,
+      "pedidos_li": 56.216958,
+      "pedidos_ls": 60.925899,
+      "faturamento_media": 11404.969388,
+      "fat_li": 10897.199468,
+      "fat_ls": 11912.739308
+    },
+    {
+      "dia_semana_num": 2,
+      "dia": "Segunda",
+      "n_dias": 57,
+      "pedidos_media": 60.929825,
+      "pedidos_li": 57.587575,
+      "pedidos_ls": 64.272074,
+      "faturamento_media": 11628.188596,
+      "fat_li": 10979.99745,
+      "fat_ls": 12276.379743
+    },
+    {
+      "dia_semana_num": 3,
+      "dia": "Terça",
+      "n_dias": 56,
+      "pedidos_media": 58.946429,
+      "pedidos_li": 56.420148,
+      "pedidos_ls": 61.472709,
+      "faturamento_media": 11358.642857,
+      "fat_li": 10839.407607,
+      "fat_ls": 11877.878107
+    },
+    {
+      "dia_semana_num": 4,
+      "dia": "Quarta",
+      "n_dias": 50,
+      "pedidos_media": 61.22,
+      "pedidos_li": 58.743755,
+      "pedidos_ls": 63.696245,
+      "faturamento_media": 11755.915,
+      "fat_li": 11258.876552,
+      "fat_ls": 12252.953448
+    },
+    {
+      "dia_semana_num": 5,
+      "dia": "Quinta",
+      "n_dias": 50,
+      "pedidos_media": 60.16,
+      "pedidos_li": 57.011844,
+      "pedidos_ls": 63.308156,
+      "faturamento_media": 11408.625,
+      "fat_li": 10750.71917,
+      "fat_ls": 12066.53083
+    },
+    {
+      "dia_semana_num": 6,
+      "dia": "Sexta",
+      "n_dias": 48,
+      "pedidos_media": 59.5,
+      "pedidos_li": 57.196516,
+      "pedidos_ls": 61.803484,
+      "faturamento_media": 11268.244792,
+      "fat_li": 10787.311059,
+      "fat_ls": 11749.178524
+    },
+    {
+      "dia_semana_num": 7,
+      "dia": "Sábado",
+      "n_dias": 48,
+      "pedidos_media": 57.9375,
+      "pedidos_li": 55.180792,
+      "pedidos_ls": 60.694208,
+      "faturamento_media": 11092.984375,
+      "fat_li": 10565.092525,
+      "fat_ls": 11620.876225
+    }
+  ],
+  "horas": [
+    {
+      "hora": 9,
+      "pedidos": 1,
+      "share": 0.000047,
+      "li": 8.267964e-06,
+      "ls": 0.000265
+    },
+    {
+      "hora": 10,
+      "pedidos": 8,
+      "share": 0.000375,
+      "li": 0.00019,
+      "ls": 0.000739
+    },
+    {
+      "hora": 11,
+      "pedidos": 1231,
+      "share": 0.057658,
+      "li": 0.05461,
+      "ls": 0.060865
+    },
+    {
+      "hora": 12,
+      "pedidos": 2520,
+      "share": 0.118033,
+      "li": 0.113773,
+      "ls": 0.12243
+    },
+    {
+      "hora": 13,
+      "pedidos": 2455,
+      "share": 0.114988,
+      "li": 0.110778,
+      "ls": 0.119337
+    },
+    {
+      "hora": 14,
+      "pedidos": 1472,
+      "share": 0.068946,
+      "li": 0.065625,
+      "ls": 0.072423
+    },
+    {
+      "hora": 15,
+      "pedidos": 1468,
+      "share": 0.068759,
+      "li": 0.065441,
+      "ls": 0.072231
+    },
+    {
+      "hora": 16,
+      "pedidos": 1920,
+      "share": 0.08993,
+      "li": 0.086166,
+      "ls": 0.093841
+    },
+    {
+      "hora": 17,
+      "pedidos": 2336,
+      "share": 0.109415,
+      "li": 0.105297,
+      "ls": 0.113672
+    },
+    {
+      "hora": 18,
+      "pedidos": 2399,
+      "share": 0.112365,
+      "li": 0.108199,
+      "ls": 0.116672
+    },
+    {
+      "hora": 19,
+      "pedidos": 2009,
+      "share": 0.094098,
+      "li": 0.090255,
+      "ls": 0.098088
+    },
+    {
+      "hora": 20,
+      "pedidos": 1642,
+      "share": 0.076909,
+      "li": 0.07341,
+      "ls": 0.080559
+    },
+    {
+      "hora": 21,
+      "pedidos": 1198,
+      "share": 0.056112,
+      "li": 0.053104,
+      "ls": 0.05928
+    },
+    {
+      "hora": 22,
+      "pedidos": 663,
+      "share": 0.031054,
+      "li": 0.02881,
+      "ls": 0.033466
+    },
+    {
+      "hora": 23,
+      "pedidos": 28,
+      "share": 0.001311,
+      "li": 0.000908,
+      "ls": 0.001895
+    }
+  ],
+  "faixas_horario": [
+    {
+      "faixa": "Jantar (17h–21h)",
+      "pedidos": 8386,
+      "share": 0.392787,
+      "li": 0.386256,
+      "ls": 0.399357
+    },
+    {
+      "faixa": "Almoço (11h–14h)",
+      "pedidos": 6206,
+      "share": 0.290679,
+      "li": 0.284626,
+      "ls": 0.296807
+    },
+    {
+      "faixa": "Tarde (14h–17h)",
+      "pedidos": 4860,
+      "share": 0.227635,
+      "li": 0.222059,
+      "ls": 0.233308
+    },
+    {
+      "faixa": "Noite (21h+)",
+      "pedidos": 1889,
+      "share": 0.088478,
+      "li": 0.084742,
+      "ls": 0.092362
+    },
+    {
+      "faixa": "Antes das 11h",
+      "pedidos": 9,
+      "share": 0.000422,
+      "li": 0.000222,
+      "ls": 0.000801
+    }
+  ],
+  "tamanhos": [
+    {
+      "tamanho": "P",
+      "pizzas": 14403,
+      "share": 0.290535,
+      "li": 0.286555,
+      "ls": 0.294548,
+      "faturamento": 890382.5,
+      "preco_medio": 61.819239
+    },
+    {
+      "tamanho": "M",
+      "pizzas": 15635,
+      "share": 0.315387,
+      "li": 0.311311,
+      "ls": 0.319492,
+      "faturamento": 1246911.25,
+      "preco_medio": 79.751279
+    },
+    {
+      "tamanho": "G",
+      "pizzas": 18956,
+      "share": 0.382378,
+      "li": 0.378109,
+      "ls": 0.386665,
+      "faturamento": 1876593.5,
+      "preco_medio": 98.997336
+    },
+    {
+      "tamanho": "GG",
+      "pizzas": 580,
+      "share": 0.0117,
+      "li": 0.01079,
+      "ls": 0.012685,
+      "faturamento": 75413,
+      "preco_medio": 130.022414
+    }
+  ],
+  "categorias": [
+    {
+      "categoria": "Clássica",
+      "pizzas": 14888,
+      "share": 0.300319,
+      "li": 0.296299,
+      "ls": 0.304369,
+      "faturamento": 1100265.5,
+      "preco_medio": 73.902841
+    },
+    {
+      "categoria": "Especial",
+      "pizzas": 11987,
+      "share": 0.2418,
+      "li": 0.238051,
+      "ls": 0.245589,
+      "faturamento": 1040985,
+      "preco_medio": 86.84283
+    },
+    {
+      "categoria": "Vegetariana",
+      "pizzas": 11649,
+      "share": 0.234982,
+      "li": 0.23127,
+      "ls": 0.238735,
+      "faturamento": 968452.25,
+      "preco_medio": 83.136085
+    },
+    {
+      "categoria": "Frango",
+      "pizzas": 11050,
+      "share": 0.222899,
+      "li": 0.219257,
+      "ls": 0.226584,
+      "faturamento": 979597.5,
+      "preco_medio": 88.651357
+    }
+  ],
+  "sabores": [
+    {
+      "nome": "Especial da Casa",
+      "categoria": "Clássica",
+      "pizzas": 2453,
+      "share": 0.049482,
+      "faturamento": 190902.5,
+      "preco_medio": 77.824093
+    },
+    {
+      "nome": "Frango com Barbecue",
+      "categoria": "Frango",
+      "pizzas": 2432,
+      "share": 0.049058,
+      "faturamento": 213840,
+      "preco_medio": 87.927632
+    },
+    {
+      "nome": "Tropical",
+      "categoria": "Clássica",
+      "pizzas": 2422,
+      "share": 0.048856,
+      "faturamento": 161366.25,
+      "preco_medio": 66.625206
+    },
+    {
+      "nome": "Pepperoni",
+      "categoria": "Clássica",
+      "pizzas": 2418,
+      "share": 0.048776,
+      "faturamento": 150808.75,
+      "preco_medio": 62.36921
+    },
+    {
+      "nome": "Frango Tailandesa",
+      "categoria": "Frango",
+      "pizzas": 2371,
+      "share": 0.047827,
+      "faturamento": 217171.25,
+      "preco_medio": 91.594791
+    },
+    {
+      "nome": "Frango Califórnia",
+      "categoria": "Frango",
+      "pizzas": 2370,
+      "share": 0.047807,
+      "faturamento": 207047.5,
+      "preco_medio": 87.361814
+    },
+    {
+      "nome": "Siciliana",
+      "categoria": "Especial",
+      "pizzas": 1938,
+      "share": 0.039093,
+      "faturamento": 154702.5,
+      "preco_medio": 79.825851
+    },
+    {
+      "nome": "Italiana Picante",
+      "categoria": "Especial",
+      "pizzas": 1924,
+      "share": 0.038811,
+      "faturamento": 174156.25,
+      "preco_medio": 90.517801
+    },
+    {
+      "nome": "Frango do Sul",
+      "categoria": "Frango",
+      "pizzas": 1917,
+      "share": 0.038669,
+      "faturamento": 173528.75,
+      "preco_medio": 90.520996
+    },
+    {
+      "nome": "Mega Carne",
+      "categoria": "Clássica",
+      "pizzas": 1914,
+      "share": 0.038609,
+      "faturamento": 114840,
+      "preco_medio": 60
+    },
+    {
+      "nome": "Quatro Queijos",
+      "categoria": "Vegetariana",
+      "pizzas": 1902,
+      "share": 0.038367,
+      "faturamento": 161328.5,
+      "preco_medio": 84.820452
+    },
+    {
+      "nome": "Suprema Italiana",
+      "categoria": "Especial",
+      "pizzas": 1884,
+      "share": 0.038004,
+      "faturamento": 167383.75,
+      "preco_medio": 88.844878
+    },
+    {
+      "nome": "Super Vegetariana",
+      "categoria": "Vegetariana",
+      "pizzas": 1526,
+      "share": 0.030782,
+      "faturamento": 121873.75,
+      "preco_medio": 79.864843
+    },
+    {
+      "nome": "Mexicana",
+      "categoria": "Vegetariana",
+      "pizzas": 1484,
+      "share": 0.029935,
+      "faturamento": 133903.75,
+      "preco_medio": 90.231637
+    },
+    {
+      "nome": "Napolitana",
+      "categoria": "Clássica",
+      "pizzas": 1464,
+      "share": 0.029532,
+      "faturamento": 120435,
+      "preco_medio": 82.264344
+    },
+    {
+      "nome": "Presunto Parma com Rúcula",
+      "categoria": "Especial",
+      "pizzas": 1457,
+      "share": 0.02939,
+      "faturamento": 120966.25,
+      "preco_medio": 83.024194
+    },
+    {
+      "nome": "Espinafre com Feta",
+      "categoria": "Vegetariana",
+      "pizzas": 1446,
+      "share": 0.029169,
+      "faturamento": 116356.25,
+      "preco_medio": 80.467669
+    },
+    {
+      "nome": "Salame com Pimenta",
+      "categoria": "Especial",
+      "pizzas": 1446,
+      "share": 0.029169,
+      "faturamento": 127645,
+      "preco_medio": 88.27455
+    },
+    {
+      "nome": "Capocollo",
+      "categoria": "Clássica",
+      "pizzas": 1438,
+      "share": 0.029007,
+      "faturamento": 125470,
+      "preco_medio": 87.253129
+    },
+    {
+      "nome": "Grega",
+      "categoria": "Clássica",
+      "pizzas": 1420,
+      "share": 0.028644,
+      "faturamento": 142270.5,
+      "preco_medio": 100.190493
+    },
+    {
+      "nome": "Cinco Queijos",
+      "categoria": "Vegetariana",
+      "pizzas": 1409,
+      "share": 0.028422,
+      "faturamento": 130332.5,
+      "preco_medio": 92.5
+    },
+    {
+      "nome": "Pepperoni com Champignon e Pimentão",
+      "categoria": "Clássica",
+      "pizzas": 1359,
+      "share": 0.027414,
+      "faturamento": 94172.5,
+      "preco_medio": 69.295438
+    },
+    {
+      "nome": "Jardim Verde",
+      "categoria": "Vegetariana",
+      "pizzas": 997,
+      "share": 0.020111,
+      "faturamento": 69778.75,
+      "preco_medio": 69.988716
+    },
+    {
+      "nome": "Frango ao Molho Branco",
+      "categoria": "Frango",
+      "pizzas": 987,
+      "share": 0.01991,
+      "faturamento": 84501.25,
+      "preco_medio": 85.614235
+    },
+    {
+      "nome": "Vegetais Italianos",
+      "categoria": "Vegetariana",
+      "pizzas": 981,
+      "share": 0.019789,
+      "faturamento": 80096.25,
+      "preco_medio": 81.647554
+    },
+    {
+      "nome": "Frango com Pesto",
+      "categoria": "Frango",
+      "pizzas": 973,
+      "share": 0.019627,
+      "faturamento": 83508.75,
+      "preco_medio": 85.826053
+    },
+    {
+      "nome": "Espinafre com Pesto",
+      "categoria": "Vegetariana",
+      "pizzas": 970,
+      "share": 0.019567,
+      "faturamento": 77980,
+      "preco_medio": 80.391753
+    },
+    {
+      "nome": "Soppressata",
+      "categoria": "Especial",
+      "pizzas": 961,
+      "share": 0.019385,
+      "faturamento": 82128.75,
+      "preco_medio": 85.461759
+    },
+    {
+      "nome": "Suprema de Espinafre",
+      "categoria": "Especial",
+      "pizzas": 950,
+      "share": 0.019163,
+      "faturamento": 76388.75,
+      "preco_medio": 80.409211
+    },
+    {
+      "nome": "Calabresa",
+      "categoria": "Especial",
+      "pizzas": 937,
+      "share": 0.018901,
+      "faturamento": 79671.25,
+      "preco_medio": 85.028015
+    },
+    {
+      "nome": "Mediterrânea",
+      "categoria": "Vegetariana",
+      "pizzas": 934,
+      "share": 0.018841,
+      "faturamento": 76802.5,
+      "preco_medio": 82.229657
+    },
+    {
+      "nome": "ie Carre Pizza",
+      "categoria": "Especial",
+      "pizzas": 490,
+      "share": 0.009884,
+      "faturamento": 57942.5,
+      "preco_medio": 118.25
+    }
+  ],
+  "precos": [
+    {
+      "tamanho": "P",
+      "n": 14137,
+      "minimo": 48.75,
+      "p25": 60,
+      "mediana": 60,
+      "p75": 62.5,
+      "maximo": 118.25,
+      "media": 61.821638
+    },
+    {
+      "tamanho": "M",
+      "n": 15385,
+      "minimo": 62.5,
+      "p25": 80,
+      "mediana": 81.25,
+      "p75": 83.75,
+      "maximo": 83.75,
+      "media": 79.756094
+    },
+    {
+      "tamanho": "G",
+      "n": 18526,
+      "minimo": 76.25,
+      "p25": 101.25,
+      "mediana": 102.5,
+      "p75": 103.75,
+      "maximo": 105,
+      "media": 99.012766
+    },
+    {
+      "tamanho": "GG",
+      "n": 572,
+      "minimo": 127.5,
+      "p25": 127.5,
+      "mediana": 127.5,
+      "p75": 127.5,
+      "maximo": 179.75,
+      "media": 130.057692
+    }
+  ],
+  "comparacao": {
+    "periodo": "1º de janeiro a 3 de agosto nos dois anos",
+    "anos": [
+      {
+        "ano": 2025,
+        "dias_registro": 230,
+        "faturamento": 2636225.5,
+        "pedidos": 13832,
+        "pizzas": 31938,
+        "media_diaria": {
+          "valor": 11461.85,
+          "li": 11232.478151,
+          "ls": 11691.221849,
+          "n": 230
+        },
+        "ticket": {
+          "valor": 190.588888,
+          "li": 188.072797,
+          "ls": 193.104979,
+          "n": 13832
+        },
+        "pedidos_dia": {
+          "valor": 60.13913,
+          "li": 59.012987,
+          "ls": 61.265274,
+          "n": 230
+        }
+      },
+      {
+        "ano": 2026,
+        "dias_registro": 128,
+        "faturamento": 1453074.75,
+        "pedidos": 7518,
+        "pizzas": 17636,
+        "media_diaria": {
+          "valor": 11352.146484,
+          "li": 10931.580899,
+          "ls": 11772.71207,
+          "n": 128
+        },
+        "ticket": {
+          "valor": 193.279429,
+          "li": 189.723286,
+          "ls": 196.835573,
+          "n": 7518
+        },
+        "pedidos_dia": {
+          "valor": 58.734375,
+          "li": 56.642959,
+          "ls": 60.825791,
+          "n": 128
+        }
+      }
+    ],
+    "diferencas": [
+      {
+        "indicador": "Faturamento por dia com registro",
+        "valor_2025": 11461.85,
+        "valor_2026": 11352.146484,
+        "dif": -109.703516,
+        "li": -588.751381,
+        "ls": 369.34435,
+        "variacao_pct": -0.009571,
+        "inclui_zero": true
+      },
+      {
+        "indicador": "Pedidos por dia com registro",
+        "valor_2025": 60.13913,
+        "valor_2026": 58.734375,
+        "dif": -1.404755,
+        "li": -3.780091,
+        "ls": 0.97058,
+        "variacao_pct": -0.023358,
+        "inclui_zero": true
+      },
+      {
+        "indicador": "Valor médio por pedido",
+        "valor_2025": 190.588888,
+        "valor_2026": 193.279429,
+        "dif": 2.690541,
+        "li": -1.665704,
+        "ls": 7.046786,
+        "variacao_pct": 0.014117,
+        "inclui_zero": true
+      }
+    ]
+  },
+  "previsao": {
+    "metodo": "Tendência amortecida (Holt) sobre a receita média por dia registrado em cada semana",
+    "unidade": "R$ por dia com registro",
+    "horizonte_semanas": 12,
+    "erro_medio_ultimas_8_semanas": 1293.563467,
+    "media_periodo": 11397.852912,
+    "ultimas_4_semanas": 9837.403125,
+    "dias_ultimas_4_semanas": 16,
+    "historico": [
+      {
+        "semana": "30/12/2024",
+        "valor": 12329.5,
+        "dias": 4
+      },
+      {
+        "semana": "06/01/2025",
+        "valor": 11919.3125,
+        "dias": 4
+      },
+      {
+        "semana": "13/01/2025",
+        "valor": 10478.3125,
+        "dias": 4
+      },
+      {
+        "semana": "20/01/2025",
+        "valor": 11220.05,
+        "dias": 5
+      },
+      {
+        "semana": "27/01/2025",
+        "valor": 11003.0625,
+        "dias": 4
+      },
+      {
+        "semana": "03/02/2025",
+        "valor": 10711.6,
+        "dias": 5
+      },
+      {
+        "semana": "10/02/2025",
+        "valor": 11074.5625,
+        "dias": 4
+      },
+      {
+        "semana": "17/02/2025",
+        "valor": 13188.0625,
+        "dias": 4
+      },
+      {
+        "semana": "24/02/2025",
+        "valor": 11232.3,
+        "dias": 5
+      },
+      {
+        "semana": "03/03/2025",
+        "valor": 11088.3125,
+        "dias": 4
+      },
+      {
+        "semana": "10/03/2025",
+        "valor": 11305.6,
+        "dias": 5
+      },
+      {
+        "semana": "17/03/2025",
+        "valor": 12094.0625,
+        "dias": 4
+      },
+      {
+        "semana": "24/03/2025",
+        "valor": 10355.4375,
+        "dias": 4
+      },
+      {
+        "semana": "31/03/2025",
+        "valor": 11636.45,
+        "dias": 5
+      },
+      {
+        "semana": "07/04/2025",
+        "valor": 11996,
+        "dias": 4
+      },
+      {
+        "semana": "14/04/2025",
+        "valor": 11519.55,
+        "dias": 5
+      },
+      {
+        "semana": "21/04/2025",
+        "valor": 11112,
+        "dias": 4
+      },
+      {
+        "semana": "28/04/2025",
+        "valor": 12155.4375,
+        "dias": 4
+      },
+      {
+        "semana": "05/05/2025",
+        "valor": 10382.75,
+        "dias": 5
+      },
+      {
+        "semana": "12/05/2025",
+        "valor": 11425.1875,
+        "dias": 4
+      },
+      {
+        "semana": "19/05/2025",
+        "valor": 11890.3,
+        "dias": 5
+      },
+      {
+        "semana": "26/05/2025",
+        "valor": 12297.4375,
+        "dias": 4
+      },
+      {
+        "semana": "02/06/2025",
+        "valor": 11250.5625,
+        "dias": 4
+      },
+      {
+        "semana": "09/06/2025",
+        "valor": 12118.8,
+        "dias": 5
+      },
+      {
+        "semana": "16/06/2025",
+        "valor": 10634.6875,
+        "dias": 4
+      },
+      {
+        "semana": "23/06/2025",
+        "valor": 12271.4,
+        "dias": 5
+      },
+      {
+        "semana": "30/06/2025",
+        "valor": 9725.25,
+        "dias": 4
+      },
+      {
+        "semana": "07/07/2025",
+        "valor": 11835.5,
+        "dias": 4
+      },
+      {
+        "semana": "14/07/2025",
+        "valor": 10373.4,
+        "dias": 5
+      },
+      {
+        "semana": "21/07/2025",
+        "valor": 12621.375,
+        "dias": 4
+      },
+      {
+        "semana": "28/07/2025",
+        "valor": 12923.25,
+        "dias": 5
+      },
+      {
+        "semana": "04/08/2025",
+        "valor": 10497.5625,
+        "dias": 4
+      },
+      {
+        "semana": "11/08/2025",
+        "valor": 11673.4375,
+        "dias": 4
+      },
+      {
+        "semana": "18/08/2025",
+        "valor": 11095.45,
+        "dias": 5
+      },
+      {
+        "semana": "25/08/2025",
+        "valor": 12152.875,
+        "dias": 4
+      },
+      {
+        "semana": "01/09/2025",
+        "valor": 11132.5,
+        "dias": 5
+      },
+      {
+        "semana": "08/09/2025",
+        "valor": 11721.75,
+        "dias": 4
+      },
+      {
+        "semana": "15/09/2025",
+        "valor": 11377.625,
+        "dias": 4
+      },
+      {
+        "semana": "22/09/2025",
+        "valor": 10873.95,
+        "dias": 5
+      },
+      {
+        "semana": "29/09/2025",
+        "valor": 10768.4375,
+        "dias": 4
+      },
+      {
+        "semana": "06/10/2025",
+        "valor": 11400.85,
+        "dias": 5
+      },
+      {
+        "semana": "13/10/2025",
+        "valor": 12725.3125,
+        "dias": 4
+      },
+      {
+        "semana": "20/10/2025",
+        "valor": 12433.6875,
+        "dias": 4
+      },
+      {
+        "semana": "27/10/2025",
+        "valor": 11397.4,
+        "dias": 5
+      },
+      {
+        "semana": "03/11/2025",
+        "valor": 11227.125,
+        "dias": 4
+      },
+      {
+        "semana": "10/11/2025",
+        "valor": 11808.4,
+        "dias": 5
+      },
+      {
+        "semana": "17/11/2025",
+        "valor": 12435.3125,
+        "dias": 4
+      },
+      {
+        "semana": "24/11/2025",
+        "valor": 10076.6875,
+        "dias": 4
+      },
+      {
+        "semana": "01/12/2025",
+        "valor": 10777.5,
+        "dias": 5
+      },
+      {
+        "semana": "08/12/2025",
+        "valor": 11138.3125,
+        "dias": 4
+      },
+      {
+        "semana": "15/12/2025",
+        "valor": 11514.25,
+        "dias": 5
+      },
+      {
+        "semana": "22/12/2025",
+        "valor": 11853,
+        "dias": 4
+      },
+      {
+        "semana": "29/12/2025",
+        "valor": 11209.8125,
+        "dias": 4
+      },
+      {
+        "semana": "05/01/2026",
+        "valor": 10364.95,
+        "dias": 5
+      },
+      {
+        "semana": "12/01/2026",
+        "valor": 11411.5625,
+        "dias": 4
+      },
+      {
+        "semana": "19/01/2026",
+        "valor": 10046.95,
+        "dias": 5
+      },
+      {
+        "semana": "26/01/2026",
+        "valor": 11592.1875,
+        "dias": 4
+      },
+      {
+        "semana": "02/02/2026",
+        "valor": 12509.1875,
+        "dias": 4
+      },
+      {
+        "semana": "09/02/2026",
+        "valor": 11327,
+        "dias": 5
+      },
+      {
+        "semana": "16/02/2026",
+        "valor": 11348.9375,
+        "dias": 4
+      },
+      {
+        "semana": "23/02/2026",
+        "valor": 10774.75,
+        "dias": 3
+      },
+      {
+        "semana": "02/03/2026",
+        "valor": 11698.625,
+        "dias": 4
+      },
+      {
+        "semana": "09/03/2026",
+        "valor": 12345,
+        "dias": 4
+      },
+      {
+        "semana": "16/03/2026",
+        "valor": 10532.9375,
+        "dias": 4
+      },
+      {
+        "semana": "23/03/2026",
+        "valor": 11231.75,
+        "dias": 3
+      },
+      {
+        "semana": "30/03/2026",
+        "valor": 13687.4,
+        "dias": 5
+      },
+      {
+        "semana": "06/04/2026",
+        "valor": 11154.916667,
+        "dias": 3
+      },
+      {
+        "semana": "13/04/2026",
+        "valor": 11910.125,
+        "dias": 4
+      },
+      {
+        "semana": "20/04/2026",
+        "valor": 10663.6875,
+        "dias": 4
+      },
+      {
+        "semana": "27/04/2026",
+        "valor": 11073.9375,
+        "dias": 4
+      },
+      {
+        "semana": "04/05/2026",
+        "valor": 11995.05,
+        "dias": 5
+      },
+      {
+        "semana": "11/05/2026",
+        "valor": 11296.6875,
+        "dias": 4
+      },
+      {
+        "semana": "18/05/2026",
+        "valor": 10834.5,
+        "dias": 4
+      },
+      {
+        "semana": "25/05/2026",
+        "valor": 11235.2,
+        "dias": 5
+      },
+      {
+        "semana": "01/06/2026",
+        "valor": 10533.9375,
+        "dias": 4
+      },
+      {
+        "semana": "08/06/2026",
+        "valor": 14918.7,
+        "dias": 5
+      },
+      {
+        "semana": "15/06/2026",
+        "valor": 11765.4375,
+        "dias": 4
+      },
+      {
+        "semana": "22/06/2026",
+        "valor": 11561.5625,
+        "dias": 4
+      },
+      {
+        "semana": "29/06/2026",
+        "valor": 11396.45,
+        "dias": 5
+      },
+      {
+        "semana": "06/07/2026",
+        "valor": 10844.5,
+        "dias": 4
+      },
+      {
+        "semana": "13/07/2026",
+        "valor": 11279.05,
+        "dias": 5
+      },
+      {
+        "semana": "20/07/2026",
+        "valor": 10042,
+        "dias": 3
+      },
+      {
+        "semana": "27/07/2026",
+        "valor": 7184.0625,
+        "dias": 4
+      }
+    ],
+    "previsto": [
+      {
+        "semana": "03/08/2026",
+        "valor": 11371.070523,
+        "li80": 10106.70619,
+        "ls80": 12635.434855,
+        "li95": 9437.392143,
+        "ls95": 13304.748903
+      },
+      {
+        "semana": "10/08/2026",
+        "valor": 11370.731025,
+        "li80": 10106.366668,
+        "ls80": 12635.095381,
+        "li95": 9437.052609,
+        "ls95": 13304.40944
+      },
+      {
+        "semana": "17/08/2026",
+        "valor": 11370.414651,
+        "li80": 10106.050245,
+        "ls80": 12634.779056,
+        "li95": 9436.736159,
+        "ls95": 13304.093142
+      },
+      {
+        "semana": "24/08/2026",
+        "valor": 11370.119826,
+        "li80": 10105.755338,
+        "ls80": 12634.484314,
+        "li95": 9436.441208,
+        "ls95": 13303.798444
+      },
+      {
+        "semana": "31/08/2026",
+        "valor": 11369.845083,
+        "li80": 10105.480474,
+        "ls80": 12634.209691,
+        "li95": 9436.166281,
+        "ls95": 13303.523885
+      },
+      {
+        "semana": "07/09/2026",
+        "valor": 11369.589053,
+        "li80": 10105.224282,
+        "ls80": 12633.953824,
+        "li95": 9435.910003,
+        "ls95": 13303.268103
+      },
+      {
+        "semana": "14/09/2026",
+        "valor": 11369.350462,
+        "li80": 10104.985485,
+        "ls80": 12633.71544,
+        "li95": 9435.671096,
+        "ls95": 13303.029829
+      },
+      {
+        "semana": "21/09/2026",
+        "valor": 11369.128123,
+        "li80": 10104.762891,
+        "ls80": 12633.493354,
+        "li95": 9435.448368,
+        "ls95": 13302.807877
+      },
+      {
+        "semana": "28/09/2026",
+        "valor": 11368.920927,
+        "li80": 10104.555395,
+        "ls80": 12633.28646,
+        "li95": 9435.240713,
+        "ls95": 13302.601142
+      },
+      {
+        "semana": "05/10/2026",
+        "valor": 11368.727845,
+        "li80": 10104.361963,
+        "ls80": 12633.093726,
+        "li95": 9435.047096,
+        "ls95": 13302.408593
+      },
+      {
+        "semana": "12/10/2026",
+        "valor": 11368.547914,
+        "li80": 10104.181635,
+        "ls80": 12632.914192,
+        "li95": 9434.866558,
+        "ls95": 13302.229269
+      },
+      {
+        "semana": "19/10/2026",
+        "valor": 11368.380238,
+        "li80": 10104.013515,
+        "ls80": 12632.746961,
+        "li95": 9434.698202,
+        "ls95": 13302.062274
+      }
+    ],
+    "semanas_excluidas": 1,
+    "aviso": "A previsão assume que o padrão das últimas semanas continua. Não há sazonalidade anual estimável: o período cobre menos de dois anos completos.",
+    "nota_recente": "As últimas 4 semanas registradas tiveram média de R$ 9.837 por dia, abaixo da média do período (R$ 11.398). O modelo projeta retorno ao padrão médio, e essa é a parte mais frágil da estimativa."
+  },
+  "qualidade": {
+    "linhas_sem_quantidade": 1,
+    "dias_sem_registro": 222,
+    "pedidos_horario_divergente": 1,
+    "semanas_excluidas_previsao": 1,
+    "observacoes": ["Dias sem registro não são dias sem venda.", "Faturamento é receita, não lucro: a base não tem custos.", "Preço praticado não é preço de cardápio: há promoções.", "As faixas de participação por sabor e tamanho são aproximadas, porque várias pizzas pertencem ao mesmo pedido."]
+  },
+  "sugestoes": ["Qual foi o faturamento total?", "Qual o valor médio por pedido?", "Qual o dia da semana com mais pedidos?", "Qual o horário de pico?", "Qual sabor vende mais?", "Qual tamanho representa a maior parte das pizzas?", "Quantas pizzas por pedido, em média?", "Como foi 2026 comparado a 2025?", "Qual a previsão para as próximas semanas?", "Quanto representa o tamanho GG?"]
+}</script>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   Dados e formatadores
+   ============================================================ */
+var D = JSON.parse(document.getElementById('dados').textContent);
+
+var nf = new Intl.NumberFormat('pt-BR');
+function num(v, dec){ return new Intl.NumberFormat('pt-BR',{minimumFractionDigits:dec||0,maximumFractionDigits:dec||0}).format(v); }
+function moeda(v, dec){
+  if (dec === undefined) dec = Math.abs(v) >= 1000 ? 0 : 2;
+  return 'R$ ' + new Intl.NumberFormat('pt-BR',{minimumFractionDigits:dec,maximumFractionDigits:dec}).format(v);
+}
+function moedaCurta(v){
+  if (Math.abs(v) >= 1000000) return 'R$ ' + num(v/1000000, 2) + ' mi';
+  if (Math.abs(v) >= 1000)    return 'R$ ' + num(v/1000, 0) + ' mil';
+  return moeda(v, 0);
+}
+function pct(v, dec){ if (dec === undefined) dec = 1; return num(v*100, dec) + '%'; }
+function porCem(v){ return num(v*100, 0); }
+
+function el(tag, attrs, filhos){
+  var n = document.createElement(tag);
+  if (attrs) for (var k in attrs){
+    if (k === 'class') n.className = attrs[k];
+    else if (k === 'text') n.textContent = attrs[k];
+    else if (k === 'html') n.innerHTML = attrs[k];
+    else n.setAttribute(k, attrs[k]);
+  }
+  (filhos||[]).forEach(function(f){ if (f) n.appendChild(f); });
+  return n;
+}
+function svgEl(tag, attrs){
+  var n = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (var k in attrs) n.setAttribute(k, attrs[k]);
+  return n;
+}
+
+/* ============================================================
+   Cabeçalho
+   ============================================================ */
+document.getElementById('subtitulo-topo').textContent =
+  'Dados de ' + D.meta.periodo_inicio + ' a ' + D.meta.periodo_fim + ' · ' +
+  D.meta.dias_registro + ' dias com registro em ' + D.meta.dias_corridos + ' dias corridos · ' +
+  num(D.meta.pedidos) + ' pedidos · ' + num(D.meta.linhas) + ' linhas de venda';
+
+document.getElementById('rodape-texto').textContent =
+  'Painel gerado em ' + D.meta.gerado_em + ' a partir de ' + D.meta.fonte + '. ' +
+  'Faturamento é receita, não lucro. A base não tem custos, identificação de cliente, dados de entrega nem estoque. ' +
+  'As faixas prováveis usam 95% de confiança, com fórmulas simples: média ± 1,96 × variação ÷ raiz do número de casos, ' +
+  'e intervalo de Wilson para proporções. As médias são calculadas por dia com registro e por pedido, nunca por linha.';
+
+/* ============================================================
+   Abas
+   ============================================================ */
+var botoes = document.querySelectorAll('nav.abas button');
+function ativarAba(nome){
+  botoes.forEach(function(o){ o.setAttribute('aria-selected', o.dataset.painel === nome ? 'true' : 'false'); });
+  document.querySelectorAll('section.painel').forEach(function(s){
+    s.classList.toggle('ativo', s.id === 'painel-' + nome);
+  });
+}
+botoes.forEach(function(b){
+  b.addEventListener('click', function(){
+    ativarAba(b.dataset.painel);
+    history.replaceState(null, '', '#' + b.dataset.painel);
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+(function(){
+  var inicial = (location.hash || '').replace('#','');
+  var valida = Array.prototype.some.call(botoes, function(b){ return b.dataset.painel === inicial; });
+  if (valida) ativarAba(inicial);
+})();
+
+/* ============================================================
+   Cartões de KPI
+   ============================================================ */
+function cartao(rotulo, valor, faixa, base, destaque){
+  return el('div', {class:'kpi' + (destaque ? ' destaque' : '')}, [
+    el('div', {class:'rotulo', text: rotulo}),
+    el('div', {class:'valor', text: valor}),
+    faixa ? el('div', {class:'faixa', text: faixa}) : null,
+    base ? el('div', {class:'base', text: base}) : null
+  ]);
+}
+
+var K = D.kpis;
+var alvoKpi = document.getElementById('kpis');
+[
+  cartao('Faturamento no período', moedaCurta(K.faturamento_total),
+         'Total exato: ' + moeda(K.faturamento_total, 2),
+         'Soma de todas as linhas. Receita, não lucro.', true),
+  cartao('Pedidos', num(K.pedidos_total), null,
+         'Pedidos distintos, não linhas de venda.'),
+  cartao('Pizzas vendidas', num(K.pizzas_total), null,
+         'Soma das quantidades, com 1 unidade imputada em 1 linha.'),
+  cartao('Valor médio por pedido', moeda(K.ticket.valor, 0),
+         'faixa provável: ' + moeda(K.ticket.li, 0) + ' a ' + moeda(K.ticket.ls, 0),
+         'Base: ' + num(K.ticket.n) + ' pedidos.', true),
+  cartao('Pizzas por pedido', num(K.pizzas_por_pedido.valor, 2),
+         'faixa provável: ' + num(K.pizzas_por_pedido.li, 2) + ' a ' + num(K.pizzas_por_pedido.ls, 2),
+         'Base: ' + num(K.pizzas_por_pedido.n) + ' pedidos.'),
+  cartao('Preço médio por pizza', moeda(K.preco_por_pizza, 0), null,
+         'Faturamento dividido pelas pizzas. Média ponderada, não preço de cardápio.'),
+  cartao('Faturamento por dia com registro', moeda(K.media_diaria.valor, 0),
+         'faixa provável: ' + moeda(K.media_diaria.li, 0) + ' a ' + moeda(K.media_diaria.ls, 0),
+         'Base: ' + num(K.media_diaria.n) + ' dias com registro.'),
+  cartao('Pedidos por dia com registro', num(K.pedidos_por_dia.valor, 1),
+         'faixa provável: ' + num(K.pedidos_por_dia.li, 1) + ' a ' + num(K.pedidos_por_dia.ls, 1),
+         'Base: ' + num(K.pedidos_por_dia.n) + ' dias.')
+].forEach(function(c){ alvoKpi.appendChild(c); });
+
+/* ============================================================
+   Gráfico de barras verticais genérico
+   ============================================================ */
+function graficoBarras(alvo, itens, opcoes){
+  var o = opcoes || {};
+  var W = 860, H = o.altura || 320;
+  var margem = {top: 18, right: 12, bottom: o.rotuloBaixo ? 46 : 30, left: 58};
+  var larguraUtil = W - margem.left - margem.right;
+  var alturaUtil  = H - margem.top - margem.bottom;
+
+  var maxV = Math.max.apply(null, itens.map(function(i){ return o.ci ? i[o.ci.lsKey] : i.valor; }));
+  var escala = function(v){ return margem.top + alturaUtil - (v / (maxV*1.12)) * alturaUtil; };
+
+  var svg = svgEl('svg', {viewBox:'0 0 ' + W + ' ' + H, role:'img'});
+
+  // grade horizontal
+  for (var g = 0; g <= 4; g++){
+    var v = maxV * 1.12 * g / 4;
+    var y = escala(v);
+    svg.appendChild(svgEl('line', {x1:margem.left, x2:W-margem.right, y1:y, y2:y, class:'grade-linha'}));
+    var t = svgEl('text', {x:margem.left-8, y:y+4, 'text-anchor':'end', class:'eixo'});
+    t.textContent = o.formatoEixo ? o.formatoEixo(v) : num(v,0);
+    svg.appendChild(t);
+  }
+
+  var passo = larguraUtil / itens.length;
+  var larguraBarra = Math.min(o.larguraMax || 34, passo * 0.62);
+
+  itens.forEach(function(it, i){
+    var xc = margem.left + passo*i + passo/2;
+    var y = escala(it.valor);
+    var h = margem.top + alturaUtil - y;
+
+    var r = svgEl('rect', {
+      x: xc - larguraBarra/2, y: y, width: larguraBarra, height: Math.max(h,1),
+      class: 'barra ' + (it.classe || o.cor || '')
+    });
+    r.appendChild(svgEl('title')).textContent =
+      it.rotulo + ': ' + (o.formatoValor ? o.formatoValor(it.valor) : num(it.valor));
+    svg.appendChild(r);
+
+    if (o.ci){
+      var yli = escala(it[o.ci.liKey]), yls = escala(it[o.ci.lsKey]);
+      svg.appendChild(svgEl('line', {x1:xc, x2:xc, y1:yls, y2:yli, class:'faixa-ci'}));
+      svg.appendChild(svgEl('line', {x1:xc-4, x2:xc+4, y1:yli, y2:yli, class:'faixa-ci'}));
+      svg.appendChild(svgEl('line', {x1:xc-4, x2:xc+4, y1:yls, y2:yls, class:'faixa-ci'}));
+    }
+
+    if (o.rotuloValor){
+      var tv = svgEl('text', {x:xc, y:y-7, 'text-anchor':'middle', class:'rotulo-barra'});
+      tv.textContent = o.formatoValor ? o.formatoValor(it.valor) : num(it.valor,0);
+      svg.appendChild(tv);
+    }
+
+    if (o.rotuloBaixo && (itens.length <= 14 || i % o.rotuloBaixo === 0)){
+      var tb = svgEl('text', {x:xc, y:H-margem.bottom+18, 'text-anchor':'middle', class:'eixo'});
+      tb.textContent = it.rotulo;
+      svg.appendChild(tb);
+    }
+  });
+
+  alvo.appendChild(svg);
+}
+
+/* ============================================================
+   Gráfico de barras horizontais genérico
+   ============================================================ */
+function graficoBarrasH(alvo, itens, opcoes){
+  var o = opcoes || {};
+  var W = o.largura || 860, linha = o.alturaLinha || 30, margemEsq = o.margemEsq || 190;
+  var H = itens.length * linha + 26;
+  var larguraUtil = W - margemEsq - (o.espacoDireita || 90);
+  var maxV = Math.max.apply(null, itens.map(function(i){ return i.valor; }));
+  var svg = svgEl('svg', {viewBox:'0 0 ' + W + ' ' + H, role:'img'});
+
+  itens.forEach(function(it, i){
+    var y = i * linha + 6;
+    var w = (it.valor / maxV) * larguraUtil;
+
+    var rot = svgEl('text', {x: margemEsq - 10, y: y + linha/2 + 4, 'text-anchor':'end', class:'eixo'});
+    rot.textContent = it.rotulo;
+    rot.setAttribute('style','font-size:12px;fill:#1B2A4A');
+    svg.appendChild(rot);
+
+    var r = svgEl('rect', {x: margemEsq, y: y + 4, width: Math.max(w,1), height: linha - 12,
+                           class: 'barra ' + (o.cor || '')});
+    r.appendChild(svgEl('title')).textContent = it.rotulo + ': ' + (o.formatoValor ? o.formatoValor(it.valor) : num(it.valor));
+    svg.appendChild(r);
+
+    var tv = svgEl('text', {x: margemEsq + w + 8, y: y + linha/2 + 4, class:'rotulo-barra'});
+    tv.textContent = o.formatoValor ? o.formatoValor(it.valor) : num(it.valor);
+    svg.appendChild(tv);
+  });
+
+  alvo.appendChild(svg);
+}
+
+/* ============================================================
+   Tabela genérica
+   ============================================================ */
+function tabela(alvo, colunas, linhas){
+  var t = el('table');
+  var thead = el('thead');
+  var trh = el('tr');
+  colunas.forEach(function(c){
+    trh.appendChild(el('th', {class: c.num ? 'num' : '', text: c.titulo}));
+  });
+  thead.appendChild(trh);
+  t.appendChild(thead);
+
+  var tbody = el('tbody');
+  linhas.forEach(function(l){
+    var tr = el('tr');
+    colunas.forEach(function(c){
+      tr.appendChild(el('td', {class: c.num ? 'num' : '', text: c.valor(l)}));
+    });
+    tbody.appendChild(tr);
+  });
+  t.appendChild(tbody);
+
+  alvo.innerHTML = '';
+  alvo.appendChild(t);
+}
+
+/* ============================================================
+   Visão geral — mensal
+   ============================================================ */
+graficoBarras(document.getElementById('grafico-mensal'),
+  D.mensal.map(function(m){
+    return {rotulo: m.rotulo, valor: m.faturamento, dias: m.dias,
+            classe: m.dias < 10 ? 'clara' : ''};
+  }),
+  {
+    altura: 330,
+    rotuloBaixo: D.mensal.length > 12 ? 2 : 1,
+    formatoEixo: function(v){ return v === 0 ? '0' : num(v/1000,0) + ' mil'; },
+    formatoValor: function(v){ return moedaCurta(v); },
+    rotuloValor: false
+  }
+);
+
+(function(){
+  var parciais = D.mensal.filter(function(m){ return m.dias < 10; });
+  var leg = document.querySelector('#painel-visao .legenda');
+  leg.appendChild(el('span', {html:'<i class="amostra-cor" style="background:#C9D1E0"></i>Mês com menos de 10 dias registrados'}));
+  if (parciais.length){
+    var aviso = el('div', {class:'aviso-limite', html:
+      '<b>Atenção:</b> ' + parciais.map(function(m){ return m.rotulo + ' (' + m.dias + ' dias)'; }).join(', ') +
+      ' aparecem com barra clara. O faturamento baixo desses meses reflete a falta de registro, não queda de venda.'});
+    document.getElementById('grafico-mensal').parentNode.appendChild(aviso);
+  }
+})();
+
+/* ============================================================
+   Ritmo — dias e horas
+   ============================================================ */
+graficoBarras(document.getElementById('grafico-dias'),
+  D.dia_semana.map(function(d){ return {rotulo: d.dia.slice(0,3), valor: d.pedidos_media, li: d.pedidos_li, ls: d.pedidos_ls}; }),
+  {
+    altura: 300, rotuloBaixo: 1,
+    ci: {liKey:'li', lsKey:'ls'},
+    formatoValor: function(v){ return num(v,0); }
+  }
+);
+
+var horasFiltradas = D.horas.filter(function(h){ return h.pedidos > 20; });
+graficoBarras(document.getElementById('grafico-horas'),
+  horasFiltradas.map(function(h){ return {rotulo: h.hora + 'h', valor: h.pedidos}; }),
+  {
+    altura: 300, rotuloBaixo: 1, cor:'coral',
+    formatoValor: function(v){ return num(v,0); }
+  }
+);
+
+tabela(document.getElementById('tabela-faixas'),
+  [
+    {titulo:'Faixa de horário', valor:function(f){ return f.faixa; }},
+    {titulo:'Pedidos', num:true, valor:function(f){ return num(f.pedidos); }},
+    {titulo:'Participação', num:true, valor:function(f){ return pct(f.share); }},
+    {titulo:'Faixa provável', num:true, valor:function(f){ return pct(f.li) + ' a ' + pct(f.ls); }}
+  ],
+  D.faixas_horario
+);
+
+/* ============================================================
+   Mix
+   ============================================================ */
+graficoBarrasH(document.getElementById('grafico-tamanhos'),
+  D.tamanhos.map(function(t){ return {rotulo: 'Tamanho ' + t.tamanho, valor: t.share}; }),
+  {largura: 440, margemEsq: 96, espacoDireita: 54, alturaLinha: 34,
+   formatoValor: function(v){ return pct(v); }}
+);
+
+graficoBarrasH(document.getElementById('grafico-categorias'),
+  D.categorias.map(function(c){ return {rotulo: c.categoria, valor: c.share}; }),
+  {largura: 440, margemEsq: 96, espacoDireita: 54, alturaLinha: 34,
+   formatoValor: function(v){ return pct(v); }}
+);
+
+var top10 = D.sabores.slice(0, 10);
+graficoBarrasH(document.getElementById('grafico-sabores'),
+  top10.map(function(s){ return {rotulo: s.nome, valor: s.pizzas}; }),
+  {formatoValor: function(v){ return num(v) + ' pizzas'; }, cor:'coral'}
+);
+
+var somaTop5 = D.sabores.slice(0,5).reduce(function(a,s){ return a + s.pizzas; }, 0);
+document.getElementById('subtitulo-sabores').textContent =
+  'De cada 100 pizzas, ' + num(somaTop5 / K.pizzas_total * 100, 0) + ' saem dos 5 sabores mais vendidos. ' +
+  'São ' + num(D.sabores.length) + ' sabores cadastrados no total.';
+
+tabela(document.getElementById('tabela-sabores'),
+  [
+    {titulo:'Sabor', valor:function(s){ return s.nome; }},
+    {titulo:'Categoria', valor:function(s){ return s.categoria; }},
+    {titulo:'Pizzas', num:true, valor:function(s){ return num(s.pizzas); }},
+    {titulo:'Participação', num:true, valor:function(s){ return pct(s.share); }},
+    {titulo:'Faturamento', num:true, valor:function(s){ return moedaCurta(s.faturamento); }},
+    {titulo:'Preço médio', num:true, valor:function(s){ return moeda(s.preco_medio, 2); }}
+  ],
+  D.sabores
+);
+
+/* ============================================================
+   Preços — amplitude por tamanho
+   ============================================================ */
+(function(){
+  var dados = D.precos;
+  var W = 860, H = 300;
+  var m = {top: 34, right: 54, bottom: 46, left: 108};
+  var larguraUtil = W - m.left - m.right, alturaUtil = H - m.top - m.bottom;
+  var minGeral = Math.min.apply(null, dados.map(function(d){ return d.minimo; }));
+  var maxGeral = Math.max.apply(null, dados.map(function(d){ return d.maximo; }));
+  var escala = function(v){ return m.left + (v - minGeral) / (maxGeral - minGeral) * larguraUtil; };
+
+  var svg = svgEl('svg', {viewBox:'0 0 ' + W + ' ' + H, role:'img'});
+  var linhaAltura = alturaUtil / dados.length;
+
+  // eixo de valores na base
+  for (var t = 0; t <= 4; t++){
+    var v = minGeral + (maxGeral - minGeral) * t / 4;
+    var xt = escala(v);
+    svg.appendChild(svgEl('line', {x1:xt, x2:xt, y1:m.top, y2:m.top+alturaUtil, class:'grade-linha'}));
+    var lab = svgEl('text', {x:xt, y:H-m.bottom+20, 'text-anchor':'middle', class:'eixo'});
+    lab.textContent = moeda(v, 0);
+    svg.appendChild(lab);
+  }
+
+  dados.forEach(function(d, i){
+    var y = m.top + linhaAltura*i + linhaAltura/2;
+
+    var rot = svgEl('text', {x:m.left-14, y:y+4, 'text-anchor':'end', class:'eixo'});
+    rot.textContent = 'Tamanho ' + d.tamanho;
+    rot.setAttribute('style','font-size:12px;fill:#1B2A4A');
+    svg.appendChild(rot);
+
+    svg.appendChild(svgEl('line', {x1:escala(d.minimo), x2:escala(d.maximo), y1:y, y2:y,
+                                   stroke:'#C9D1E0', 'stroke-width':10, 'stroke-linecap':'butt'}));
+    svg.appendChild(svgEl('circle', {cx:escala(d.mediana), cy:y, r:6, fill:'#E14B3E'}));
+
+    var tmin = svgEl('text', {x:escala(d.minimo)+4, y:y-12, 'text-anchor':'start', class:'eixo'});
+    tmin.textContent = moeda(d.minimo, 0);
+    svg.appendChild(tmin);
+
+    var tmax = svgEl('text', {x:escala(d.maximo)-4, y:y-12, 'text-anchor':'end', class:'eixo'});
+    tmax.textContent = moeda(d.maximo, 0);
+    svg.appendChild(tmax);
+  });
+
+  document.getElementById('grafico-precos').appendChild(svg);
+})();
+
+tabela(document.getElementById('tabela-precos'),
+  [
+    {titulo:'Tamanho', valor:function(p){ return p.tamanho; }},
+    {titulo:'Registros', num:true, valor:function(p){ return num(p.n); }},
+    {titulo:'Mínimo', num:true, valor:function(p){ return moeda(p.minimo, 2); }},
+    {titulo:'Valor típico', num:true, valor:function(p){ return moeda(p.mediana, 2); }},
+    {titulo:'Máximo', num:true, valor:function(p){ return moeda(p.maximo, 2); }},
+    {titulo:'Média', num:true, valor:function(p){ return moeda(p.media, 2); }}
+  ],
+  D.precos
+);
+
+/* ============================================================
+   Comparação 2025 x 2026
+   ============================================================ */
+var C = D.comparacao;
+var a25 = C.anos[0], a26 = C.anos[1];
+
+document.getElementById('descricao-comparacao').textContent =
+  'Os dois anos foram recortados no mesmo intervalo de calendário: ' + C.periodo + '. ' +
+  'Assim, a diferença não vem do número de dias do calendário. Mesmo assim, o número de dias com registro é diferente: ' +
+  a25.dias_registro + ' em 2025 contra ' + a26.dias_registro + ' em 2026.';
+
+document.getElementById('kpis-comparacao').appendChild(
+  cartao('Dias com registro em 2025', num(a25.dias_registro), null,
+         'No recorte de 1º de janeiro a 3 de agosto.')
+);
+document.getElementById('kpis-comparacao').appendChild(
+  cartao('Dias com registro em 2026', num(a26.dias_registro), null,
+         'Mesmo recorte de calendário. Cobertura menor que em 2025.', true)
+);
+document.getElementById('kpis-comparacao').appendChild(
+  cartao('Faturamento 2025', moedaCurta(a25.faturamento), null, 'Total do recorte. Receita, não lucro.')
+);
+document.getElementById('kpis-comparacao').appendChild(
+  cartao('Faturamento 2026', moedaCurta(a26.faturamento), null,
+         'Total menor principalmente por ter menos dias registrados.', true)
+);
+
+(function(){
+  var alvo = document.getElementById('comparacao-medias');
+
+  C.diferencas.forEach(function(d){
+    var linha = el('div', {class:'linha-comp'});
+
+    linha.appendChild(el('div', {class:'nome', text: d.indicador}));
+
+    var comp = el('div', {class:'comparativo'});
+    var maxV = Math.max(d.valor_2025, d.valor_2026);
+    var fmt = function(v){
+      return d.indicador.indexOf('Valor médio') === 0 ? moeda(v, 0) :
+             d.indicador.indexOf('Faturamento') === 0 ? moeda(v, 0) : num(v, 1);
+    };
+
+    [['2025', d.valor_2025, ''], ['2026', d.valor_2026, 'ano2026']].forEach(function(par){
+      var barra = el('div', {class:'barra-comp ' + par[2]});
+      barra.appendChild(el('span', {text:par[0], style:'width:40px;display:inline-block'}));
+      var preench = el('div', {class:'preench', style:'width:' + (par[1]/maxV*100) + '%'});
+      var caixa = el('div', {style:'flex:1;background:#F1F1EE;height:12px'});
+      caixa.appendChild(preench);
+      barra.appendChild(caixa);
+      barra.appendChild(el('span', {class:'valor', text: fmt(par[1])}));
+      comp.appendChild(barra);
+    });
+
+    linha.appendChild(comp);
+
+    var dif = el('div', {style:'text-align:right;font-size:13px'});
+    var sinal = d.dif >= 0 ? '+' : '−';
+    dif.appendChild(el('div', {style:'font-weight:700;color:' + (d.inclui_zero ? '#5F6368' : '#B93A30'),
+                               text: sinal + fmt(Math.abs(d.dif)).replace('R$ ','R$ ')}));
+    dif.appendChild(el('div', {class:'faixa-mini', text:'faixa: ' + fmt(d.li).replace('−','') + ' a ' + fmt(d.ls)}));
+    dif.appendChild(el('div', {class:'faixa-mini',
+      text: d.inclui_zero ? 'inclui o zero' : 'não inclui o zero'}));
+    linha.appendChild(dif);
+
+    alvo.appendChild(linha);
+  });
+
+  alvo.appendChild(el('div', {class:'nota nota-azul', style:'margin-top:18px', html:
+    '<b>Como ler:</b> quando a faixa da diferença inclui o zero, a mudança observada pode ser apenas variação normal do movimento. ' +
+    'Nesse caso, esta análise não afirma que houve aumento ou queda.'}));
+})();
+
+tabela(document.getElementById('tabela-cobertura'),
+  [
+    {titulo:'Ano', valor:function(a){ return a.ano; }},
+    {titulo:'Dias registrados', num:true, valor:function(a){ return num(a.dias_registro); }},
+    {titulo:'Pedidos', num:true, valor:function(a){ return num(a.pedidos); }},
+    {titulo:'Pizzas', num:true, valor:function(a){ return num(a.pizzas); }},
+    {titulo:'Faturamento', num:true, valor:function(a){ return moeda(a.faturamento, 2); }},
+    {titulo:'Faturamento por dia', num:true, valor:function(a){ return moeda(a.media_diaria.valor, 0); }},
+    {titulo:'Valor médio por pedido', num:true, valor:function(a){ return moeda(a.ticket.valor, 0); }}
+  ],
+  C.anos
+);
+
+/* ============================================================
+   Previsão
+   ============================================================ */
+var P = D.previsao;
+
+document.getElementById('descricao-previsao').textContent =
+  'Modelo: ' + P.metodo + '. Horizonte de ' + P.horizonte_semanas + ' semanas. ' +
+  'Erro médio nas 8 semanas de teste: ' + moeda(P.erro_medio_ultimas_8_semanas, 0) +
+  ' por dia, para um movimento típico de cerca de ' + moeda(K.media_diaria.valor, 0) + ' por dia.';
+
+var primeira = P.previsto[0], ultima = P.previsto[P.previsto.length-1];
+document.getElementById('kpis-previsao').appendChild(
+  cartao('Estimativa para a semana de ' + primeira.semana, moeda(primeira.valor, 0),
+         'faixa provável: ' + moeda(primeira.li95, 0) + ' a ' + moeda(primeira.ls95, 0),
+         'Por dia com registro.', true)
+);
+document.getElementById('kpis-previsao').appendChild(
+  cartao('Estimativa para a semana de ' + ultima.semana, moeda(ultima.valor, 0),
+         'faixa provável: ' + moeda(ultima.li95, 0) + ' a ' + moeda(ultima.ls95, 0),
+         'Por dia com registro.')
+);
+document.getElementById('kpis-previsao').appendChild(
+  cartao('Erro médio do modelo', moeda(P.erro_medio_ultimas_8_semanas, 0), null,
+         'Nas 8 semanas usadas como teste.')
+);
+document.getElementById('kpis-previsao').appendChild(
+  cartao('Média das últimas 4 semanas', moeda(P.ultimas_4_semanas, 0), null,
+         'Por dia registrado, antes da estimativa. Média do período: ' + moeda(P.media_periodo, 0) + '.', true)
+);
+
+(function(){
+  var aviso = el('div', {class:'nota', html:
+    '<b>Atenção ao ponto de partida.</b> ' + P.nota_recente +
+    ' Se o movimento continuar como nas últimas semanas, a estimativa estará alta.'});
+  var alvo = document.getElementById('grafico-previsao').parentNode;
+  alvo.appendChild(aviso);
+})();
+
+
+(function(){
+  var hist = P.historico, prev = P.previsto;
+  var total = hist.length + prev.length;
+  var W = 900, H = 360;
+  var m = {top: 24, right: 20, bottom: 46, left: 64};
+  var larguraUtil = W - m.left - m.right, alturaUtil = H - m.top - m.bottom;
+
+  var todos = hist.map(function(h){ return h.valor; })
+    .concat(prev.map(function(p){ return p.ls95; }))
+    .concat(prev.map(function(p){ return p.li95; }));
+  var minV = Math.min.apply(null, todos) * 0.94;
+  var maxV = Math.max.apply(null, todos) * 1.05;
+
+  var x = function(i){ return m.left + (i / (total - 1)) * larguraUtil; };
+  var y = function(v){ return m.top + alturaUtil - (v - minV) / (maxV - minV) * alturaUtil; };
+
+  var svg = svgEl('svg', {viewBox:'0 0 ' + W + ' ' + H, role:'img'});
+
+  for (var g = 0; g <= 4; g++){
+    var v = minV + (maxV - minV) * g / 4;
+    svg.appendChild(svgEl('line', {x1:m.left, x2:W-m.right, y1:y(v), y2:y(v), class:'grade-linha'}));
+    var t = svgEl('text', {x:m.left-8, y:y(v)+4, 'text-anchor':'end', class:'eixo'});
+    t.textContent = num(v/1000, 1) + ' mil';
+    svg.appendChild(t);
+  }
+
+  // faixa provável
+  var area = '';
+  prev.forEach(function(p, i){ area += (i === 0 ? 'M' : 'L') + x(hist.length + i) + ',' + y(p.ls95) + ' '; });
+  for (var j = prev.length - 1; j >= 0; j--){
+    area += 'L' + x(hist.length + j) + ',' + y(prev[j].li95) + ' ';
+  }
+  area += 'Z';
+  svg.appendChild(svgEl('path', {d:area, fill:'rgba(225,75,62,.22)'}));
+
+  // linha observada
+  var linhaObs = hist.map(function(h, i){ return (i === 0 ? 'M' : 'L') + x(i) + ',' + y(h.valor); }).join(' ');
+  svg.appendChild(svgEl('path', {d:linhaObs, fill:'none', stroke:'#1B2A4A', 'stroke-width':2.2}));
+
+  // linha prevista
+  var linhaPrev = prev.map(function(p, i){ return (i === 0 ? 'M' : 'L') + x(hist.length + i) + ',' + y(p.valor); }).join(' ');
+  svg.appendChild(svgEl('path', {d:linhaPrev, fill:'none', stroke:'#E14B3E', 'stroke-width':2.2, 'stroke-dasharray':'6 4'}));
+
+  // separador
+  svg.appendChild(svgEl('line', {x1:x(hist.length-1), x2:x(hist.length-1), y1:m.top, y2:m.top+alturaUtil,
+                                 stroke:'#D9D9D9', 'stroke-dasharray':'3 3'}));
+  var sep = svgEl('text', {x:x(hist.length-1)-6, y:m.top-8, 'text-anchor':'end', class:'eixo'});
+  sep.textContent = 'início da estimativa';
+  svg.appendChild(sep);
+
+  // rótulos do eixo x, espaçados para não se sobrepor
+  [0, Math.floor(hist.length/2), hist.length-1, total-1].forEach(function(i){
+    var alvo = i < hist.length ? hist[i] : prev[i - hist.length];
+    var tx = svgEl('text', {x:x(i), y:H-m.bottom+22, 'text-anchor':'middle', class:'eixo'});
+    tx.textContent = alvo.semana;
+    svg.appendChild(tx);
+  });
+
+  document.getElementById('grafico-previsao').appendChild(svg);
+})();
+
+tabela(document.getElementById('tabela-previsao'),
+  [
+    {titulo:'Semana de', valor:function(p){ return p.semana; }},
+    {titulo:'Estimativa por dia', num:true, valor:function(p){ return moeda(p.valor, 0); }},
+    {titulo:'Faixa provável (80%)', num:true, valor:function(p){ return moeda(p.li80, 0) + ' a ' + moeda(p.ls80, 0); }},
+    {titulo:'Faixa provável (95%)', num:true, valor:function(p){ return moeda(p.li95, 0) + ' a ' + moeda(p.ls95, 0); }}
+  ],
+  P.previsto
+);
+
+/* ============================================================
+   Qualidade dos dados
+   ============================================================ */
+var Q = D.qualidade;
+
+[
+  cartao('Dias sem registro', num(Q.dias_sem_registro), null,
+         'De ' + num(D.meta.dias_corridos) + ' dias corridos. Não são dias sem venda.', true),
+  cartao('Linhas sem quantidade', num(Q.linhas_sem_quantidade), null,
+         'Preenchidas com 1 unidade. O preço total confirmava 1.'),
+  cartao('Pedidos com horário divergente', num(Q.pedidos_horario_divergente), null,
+         'Foi usado o primeiro horário registrado do pedido.'),
+  cartao('Semanas fora da previsão', num(Q.semanas_excluidas_previsao), null,
+         'Menos de 3 dias registrados na semana.')
+].forEach(function(c){ document.getElementById('kpis-qualidade').appendChild(c); });
+
+tabela(document.getElementById('tabela-qualidade'),
+  [
+    {titulo:'Situação', valor:function(r){ return r.situacao; }},
+    {titulo:'Tratamento', valor:function(r){ return r.tratamento; }}
+  ],
+  [
+    {situacao:'1 linha sem quantidade', tratamento:'Preenchida com 1 unidade, porque o preço total dividido pelo unitário dava 1. Registrado em nota.'},
+    {situacao:'222 dias sem nenhum registro', tratamento:'Não tratados como venda zero. As médias usam apenas dias com registro.'},
+    {situacao:'1 pedido com horários diferentes entre linhas', tratamento:'Usado o primeiro horário do pedido. O dado original não foi alterado.'},
+    {situacao:'Preços diferentes no mesmo tamanho', tratamento:'A média não é tratada como preço de cardápio. A tabela mostra mínimo, típico e máximo.'},
+    {situacao:'Sem custos, cliente, entrega ou estoque', tratamento:'Declarado como limite em todas as seções afetadas.'}
+  ]
+);
+
+tabela(document.getElementById('tabela-nao-responde'),
+  [
+    {titulo:'Pergunta', valor:function(r){ return r.pergunta; }},
+    {titulo:'Por que não dá', valor:function(r){ return r.motivo; }}
+  ],
+  [
+    {pergunta:'Qual sabor dá mais lucro?', motivo:'A base tem preço, não custo de ingredientes nem custo operacional.'},
+    {pergunta:'Quantos clientes diferentes compraram?', motivo:'Não há identificação de cliente, então não dá para medir recompra ou fidelidade.'},
+    {pergunta:'Qual o tempo médio de entrega?', motivo:'Não há horário de saída nem de chegada, só o horário do pedido.'},
+    {pergunta:'Quanto foi perdido por falta de ingrediente?', motivo:'Não há registro de pedidos recusados ou itens em falta.'},
+    {pergunta:'A promoção aumentou as vendas?', motivo:'Sem grupo de comparação e sem experimento, os dados não mostram causa, só coincidência.'}
+  ]
+);
+
+document.getElementById('metodo').innerHTML =
+  '<p><b>Unidades.</b> Uma linha é um item vendido. Um pedido reúne várias linhas com o mesmo número. ' +
+  'Uma pizza é a soma das quantidades. Os cálculos de média usam pedidos e dias com registro, nunca as ' + num(D.meta.linhas) + ' linhas soltas.</p>' +
+  '<p><b>Faixas prováveis.</b> Para médias: valor médio ± 1,96 × variação ÷ raiz do número de casos. ' +
+  'Para proporções: intervalo de Wilson, que é uma fórmula fechada e se comporta melhor em proporções pequenas. ' +
+  'Nível de 95%. Os totais do período não recebem faixa, porque são o valor observado, não uma estimativa.</p>' +
+  '<p><b>Comparação anual.</b> Os dois anos usam o mesmo intervalo de calendário, de 1º de janeiro a 3 de agosto. ' +
+  'A diferença entre anos vem com a faixa da própria diferença; quando ela inclui o zero, a mudança pode ser só variação.</p>' +
+  '<p><b>Previsão.</b> Tendência amortecida sobre a receita média por dia registrado em cada semana, com 12 semanas de horizonte. ' +
+  'Semanas com menos de 3 dias registrados ficam fora. O erro foi medido nas 8 semanas finais, que não participaram do ajuste.</p>';
+
+/* ============================================================
+   Chat por regras
+   ============================================================ */
+var normalizar = function(t){
+  return t.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s]/g,' ')
+    .replace(/\s+/g,' ').trim();
+};
+
+var CA = D.comparacao.anos[0], CB = D.comparacao.anos[1];
+var DIF = D.comparacao.diferencas;
+
+function topSabores(n){
+  return D.sabores.slice(0, n);
+}
+
+function respostaFaturamento(){
+  return {
+    texto:'O faturamento do período foi de <b>' + moeda(K.faturamento_total, 2) + '</b>.' +
+          '<br>Isso é receita, não lucro: a base não tem custos.',
+    fonte:'Base: ' + num(D.meta.linhas) + ' linhas de venda, de ' + D.meta.periodo_inicio + ' a ' + D.meta.periodo_fim + '.',
+    limite:'Não dá para dizer quanto sobrou: não há custo de ingrediente, equipe ou aluguel.'
+  };
+}
+function respostaTicket(){
+  return {
+    texto:'O valor médio por pedido foi de <b>' + moeda(K.ticket.valor, 2) + '</b>.' +
+          '<br>Faixa provável: ' + moeda(K.ticket.li, 2) + ' a ' + moeda(K.ticket.ls, 2) + '.',
+    fonte:'Base: ' + num(K.ticket.n) + ' pedidos.',
+    limite:'É o valor médio do pedido inteiro, não o preço de uma pizza.'
+  };
+}
+function respostaPizzas(){
+  return {
+    texto:'Foram <b>' + num(K.pizzas_total) + ' pizzas</b> vendidas no período.' +
+          '<br>Média de ' + num(K.pizzas_por_pedido.valor, 2) + ' pizzas por pedido ' +
+          '(faixa provável: ' + num(K.pizzas_por_pedido.li, 2) + ' a ' + num(K.pizzas_por_pedido.ls, 2) + ').',
+    fonte:'Base: ' + num(K.pizzas_por_pedido.n) + ' pedidos. Uma linha sem quantidade foi preenchida com 1 unidade.',
+    limite:'Volume de pizzas não é faturamento: depende do tamanho e do preço de cada uma.'
+  };
+}
+function respostaPedidos(){
+  return {
+    texto:'Foram <b>' + num(K.pedidos_total) + ' pedidos</b> no período.' +
+          '<br>Média de ' + num(K.pedidos_por_dia.valor, 1) + ' pedidos por dia com registro ' +
+          '(faixa provável: ' + num(K.pedidos_por_dia.li, 1) + ' a ' + num(K.pedidos_por_dia.ls, 1) + ').',
+    fonte:'Base: ' + num(K.pedidos_por_dia.n) + ' dias com registro.',
+    limite:'A base tem ' + num(Q.dias_sem_registro) + ' dias sem registro, que não entram na média.'
+  };
+}
+function respostaMediaDiaria(){
+  return {
+    texto:'O faturamento médio foi de <b>' + moeda(K.media_diaria.valor, 0) + ' por dia com registro</b>.' +
+          '<br>Faixa provável: ' + moeda(K.media_diaria.li, 0) + ' a ' + moeda(K.media_diaria.ls, 0) + '.',
+    fonte:'Base: ' + num(K.media_diaria.n) + ' dias com registro.',
+    limite:'Não divida por 580 dias corridos: isso misturaria dias sem registro com dias de venda baixa.'
+  };
+}
+function respostaDiaSemana(){
+  var ordenado = D.dia_semana.slice().sort(function(a,b){ return b.pedidos_media - a.pedidos_media; });
+  var primeiro = ordenado[0], ultimo = ordenado[ordenado.length-1];
+  var linhas = ordenado.map(function(d){
+    return '<tr><td>' + d.dia + '</td><td style="text-align:right">' + num(d.pedidos_media,1) + '</td>' +
+           '<td style="text-align:right;color:#5F6368">' + num(d.pedidos_li,1) + '–' + num(d.pedidos_ls,1) + '</td></tr>';
+  }).join('');
+  return {
+    texto:'O dia com mais pedidos é <b>' + primeiro.dia + '</b>, com ' + num(primeiro.pedidos_media,1) + ' pedidos por dia em média.' +
+          '<br>O menos movimentado é ' + ultimo.dia + ', com ' + num(ultimo.pedidos_media,1) + '. A diferença entre eles é pequena.' +
+          '<table><thead><tr><th>Dia</th><th style="text-align:right">Média</th><th style="text-align:right">Faixa</th></tr></thead><tbody>' + linhas + '</tbody></table>',
+    fonte:'Base: dias com registro de cada dia da semana.',
+    limite:'A diferença entre o melhor e o pior dia é pequena e as faixas se sobrepõem: não dá para afirmar que um dia é melhor que outro.'
+  };
+}
+function respostaHora(){
+  var ordenado = D.horas.slice().sort(function(a,b){ return b.pedidos - a.pedidos; });
+  var pico = ordenado[0];
+  var faixa = D.faixas_horario[0];
+  return {
+    texto:'O horário de pico é <b>' + pico.hora + 'h</b>, com ' + num(pico.pedidos) + ' pedidos ' +
+          '(' + pct(pico.share) + ' do total).' +
+          '<br>A faixa que mais concentra pedidos é <b>' + faixa.faixa + '</b>, com ' + pct(faixa.share) + '.',
+    fonte:'Base: ' + num(K.pedidos_total) + ' pedidos, pelo horário em que o pedido foi registrado.',
+    limite:'Horário do pedido não é horário de entrega, e a base não tem tempo de preparo.'
+  };
+}
+function respostaSabores(){
+  var s = topSabores(5);
+  var linhas = s.map(function(x){
+    return '<tr><td>' + x.nome + '</td><td style="text-align:right">' + num(x.pizzas) + '</td>' +
+           '<td style="text-align:right">' + pct(x.share) + '</td></tr>';
+  }).join('');
+  return {
+    texto:'O sabor mais vendido é <b>' + s[0].nome + '</b>, com ' + num(s[0].pizzas) + ' pizzas ' +
+          '(' + pct(s[0].share) + ' do total).' +
+          '<table><thead><tr><th>Sabor</th><th style="text-align:right">Pizzas</th><th style="text-align:right">Fatia</th></tr></thead><tbody>' + linhas + '</tbody></table>',
+    fonte:'Base: ' + num(K.pizzas_total) + ' pizzas vendidas.',
+    limite:'Sabor mais vendido não é sabor mais lucrativo: a base não tem custo por sabor.'
+  };
+}
+function respostaTamanhos(){
+  var linhas = D.tamanhos.map(function(t){
+    return '<tr><td>' + t.tamanho + '</td><td style="text-align:right">' + num(t.pizzas) + '</td>' +
+           '<td style="text-align:right">' + pct(t.share) + '</td>' +
+           '<td style="text-align:right">' + moeda(t.preco_medio, 0) + '</td></tr>';
+  }).join('');
+  var maior = D.tamanhos.slice().sort(function(a,b){ return b.pizzas - a.pizzas; })[0];
+  return {
+    texto:'O tamanho que mais sai é o <b>' + maior.tamanho + '</b>: de cada 100 pizzas, ' + porCem(maior.share) + ' são desse tamanho.' +
+          '<table><thead><tr><th>Tamanho</th><th style="text-align:right">Pizzas</th><th style="text-align:right">Fatia</th><th style="text-align:right">Preço médio</th></tr></thead><tbody>' + linhas + '</tbody></table>',
+    fonte:'Base: ' + num(K.pizzas_total) + ' pizzas.',
+    limite:'A faixa de participação é aproximada, porque várias pizzas do mesmo pedido não são independentes.'
+  };
+}
+function respostaCategorias(){
+  var linhas = D.categorias.map(function(c){
+    return '<tr><td>' + c.categoria + '</td><td style="text-align:right">' + num(c.pizzas) + '</td>' +
+           '<td style="text-align:right">' + pct(c.share) + '</td></tr>';
+  }).join('');
+  return {
+    texto:'As quatro categorias são bem equilibradas:' +
+          '<table><thead><tr><th>Categoria</th><th style="text-align:right">Pizzas</th><th style="text-align:right">Fatia</th></tr></thead><tbody>' + linhas + '</tbody></table>',
+    fonte:'Base: ' + num(K.pizzas_total) + ' pizzas.',
+    limite:'Participação não é rentabilidade. A base não tem custo por categoria.'
+  };
+}
+function respostaPrecos(){
+  var linhas = D.precos.map(function(p){
+    return '<tr><td>' + p.tamanho + '</td><td style="text-align:right">' + moeda(p.minimo,0) + '</td>' +
+           '<td style="text-align:right">' + moeda(p.mediana,0) + '</td>' +
+           '<td style="text-align:right">' + moeda(p.maximo,0) + '</td></tr>';
+  }).join('');
+  return {
+    texto:'O preço médio por pizza foi de <b>' + moeda(K.preco_por_pizza, 2) + '</b>.' +
+          '<table><thead><tr><th>Tam.</th><th style="text-align:right">Mínimo</th><th style="text-align:right">Típico</th><th style="text-align:right">Máximo</th></tr></thead><tbody>' + linhas + '</tbody></table>',
+    fonte:'Base: preço unitário de ' + num(D.meta.linhas) + ' linhas.',
+    limite:'Preço praticado não é preço de cardápio: promoções entram na média. E preço não é margem.'
+  };
+}
+function respostaComparacao(){
+  var linhas = DIF.map(function(d){
+    return '<tr><td>' + d.indicador.replace(' por dia com registro','/dia') + '</td>' +
+           '<td style="text-align:right">' + (d.dif >= 0 ? '+' : '−') + num(Math.abs(d.variacao_pct)*100,1) + '%</td>' +
+           '<td style="text-align:right">' + (d.inclui_zero ? 'inclui zero' : 'fora do zero') + '</td></tr>';
+  }).join('');
+  return {
+    texto:'Comparando 1º de janeiro a 3 de agosto nos dois anos, as médias ficaram praticamente iguais.' +
+          '<table><thead><tr><th>Indicador</th><th style="text-align:right">Variação</th><th style="text-align:right">Leitura</th></tr></thead><tbody>' + linhas + '</tbody></table>' +
+          'A cobertura de registro caiu: ' + num(CA.dias_registro) + ' dias em 2025 contra ' + num(CB.dias_registro) + ' em 2026, no mesmo intervalo.',
+    fonte:'Base: dias com registro e pedidos de cada ano, no mesmo recorte de calendário.',
+    limite:'Todas as faixas incluem o zero: a mudança observada pode ser apenas variação normal. Valores em reais correntes, sem descontar inflação.'
+  };
+}
+function respostaPrevisao(){
+  var p1 = P.previsto[0];
+  return {
+    texto:'A estimativa para a semana de ' + p1.semana + ' é de <b>' + moeda(p1.valor, 0) + ' por dia com registro</b>.' +
+          '<br>Faixa provável de 95%: ' + moeda(p1.li95, 0) + ' a ' + moeda(p1.ls95, 0) + '.' +
+          '<br>O modelo aponta estabilidade nas próximas ' + P.horizonte_semanas + ' semanas.' +
+          '<br>Nas últimas 4 semanas, porém, a média foi de ' + moeda(P.ultimas_4_semanas, 0) + ' por dia, abaixo da média do período (' + moeda(P.media_periodo, 0) + ').',
+    fonte:'Modelo de tendência amortecida sobre a receita média diária de cada semana.',
+    limite:'A estimativa assume que o padrão atual continua. Feriados, férias, preço e concorrência não entram no modelo.'
+  };
+}
+function respostaQualidade(){
+  return {
+    texto:'A base tem <b>' + num(Q.dias_sem_registro) + ' dias sem registro</b> em ' + num(D.meta.dias_corridos) + ' dias corridos.' +
+          '<br>Também há 1 linha sem quantidade (preenchida com 1 unidade) e 1 pedido com horários diferentes entre linhas.',
+    fonte:'Base: ' + num(D.meta.linhas) + ' linhas, ' + num(D.meta.pedidos) + ' pedidos.',
+    limite:'Dia sem registro não é dia sem venda. Pode ser folga, falha de anotação ou recorte da base: os três casos não se distinguem.'
+  };
+}
+function respostaAcumulada(){
+  var soma5 = topSabores(5).reduce(function(a,s){ return a + s.pizzas; }, 0);
+  return {
+    texto:'Os 5 sabores mais vendidos somam <b>' + num(soma5) + ' pizzas</b>, ou ' + pct(soma5 / K.pizzas_total) + ' do total.' +
+          '<br>São ' + num(D.sabores.length) + ' sabores cadastrados: a cauda é longa, mas cada um pesa pouco.',
+    fonte:'Base: ' + num(K.pizzas_total) + ' pizzas.',
+    limite:'Concentração não diz nada sobre lucro: falta custo por sabor.'
+  };
+}
+function respostaNaoSei(pergunta){
+  return {
+    texto:'Não consigo responder isso com esta base. O painel trabalha com faturamento, pedidos, pizzas, tamanhos, categorias, sabores, preços, dias, horários e a comparação entre 2025 e 2026.' +
+          '<br>Tente algo como: "qual o valor médio por pedido?" ou "qual o horário de pico?".',
+    fonte:'Pergunta recebida: "' + pergunta + '".',
+    limite:'Se a resposta depende de custo, cliente, entrega ou estoque, ela não existe neste conjunto de dados.'
+  };
+}
+
+var REGRAS = [
+  {chaves:['lucro','margem','lucrativ','cust','cmv','sobra','rentab'], fn:function(){ return {
+      texto:'Lucro e margem não podem ser calculados com esta base.',
+      fonte:'A base tem preço praticado, não custo.',
+      limite:'Faltam custo dos ingredientes, custo de equipe, aluguel e taxas. Sem isso, qualquer número de lucro seria invenção.'
+    };
+  }},
+  {chaves:['cliente','fidelid','recompra','quem compra','perfil'], fn:function(){ return {
+      texto:'Não há identificação de cliente na base.',
+      fonte:'Cada pedido tem número, mas não tem nome, telefone ou cadastro.',
+      limite:'Sem identificar o cliente, não dá para medir recompra, fidelidade ou perfil de consumo.'
+    };
+  }},
+  {chaves:['entrega','delivery','tempo de preparo','demora','frete','taxa'], fn:function(){ return {
+      texto:'Não há dados de entrega na base.',
+      fonte:'Existe apenas o horário do pedido.',
+      limite:'Sem horário de saída e de chegada, não dá para calcular tempo de entrega nem área de atendimento.'
+    };
+  }},
+  {chaves:['estoque','desperdicio','ingrediente','compra de insumo'], fn:function(){ return {
+      texto:'Não há dados de estoque nem de consumo de ingredientes.',
+      fonte:'A base registra a venda, não o insumo usado.',
+      limite:'Sem isso, não dá para calcular desperdício nem necessidade de compra.'
+    };
+  }},
+  {chaves:['previsao','prever','futuro','proximas semanas','estimativa para frente','vai vender'], fn:respostaPrevisao},
+  {chaves:['2026','2025','comparacao','comparar','cresceu','caiu','ano passado','variacao'], fn:respostaComparacao},
+  {chaves:['dia da semana','melhor dia','pior dia','sabado','domingo','segunda','terca','quarta','quinta','sexta','fim de semana'], fn:respostaDiaSemana},
+  {chaves:['horario','hora','pico','almoco','jantar','noite'], fn:respostaHora},
+  {chaves:['sabor','sabores','mais vendido','pizza mais'], fn:respostaSabores},
+  {chaves:['concentracao','top 5','poucos sabores','cauda'], fn:respostaAcumulada},
+  {chaves:['tamanho','tamanhos','gg','grande','media','pequena'], fn:respostaTamanhos},
+  {chaves:['categoria','categorias','classica','vegetariana','especial','frango'], fn:respostaCategorias},
+  {chaves:['preco','precos','caro','barato','valor da pizza','quanto custa'], fn:respostaPrecos},
+  {chaves:['ticket','valor medio por pedido','media por pedido','gasto por pedido'], fn:respostaTicket},
+  {chaves:['pizza por pedido','pizzas por pedido','quantas pizzas'], fn:respostaPizzas},
+  {chaves:['faturamento','receita','faturou','vendeu em reais','total em reais','quanto entrou'], fn:respostaFaturamento},
+  {chaves:['por dia','media diaria','faturamento diario','dia com registro'], fn:respostaMediaDiaria},
+  {chaves:['pedido','pedidos','quantos pedidos'], fn:respostaPedidos},
+  {chaves:['qualidade','dias sem registro','confiabilidade','limite','problema na base','lacuna'], fn:respostaQualidade}
+];
+
+function responder(pergunta){
+  var t = normalizar(pergunta);
+  var melhor = null, melhorPontos = 0;
+  REGRAS.forEach(function(r){
+    var pontos = 0;
+    r.chaves.forEach(function(k){
+      if (t.indexOf(normalizar(k)) !== -1) pontos += k.split(' ').length + 1;
+    });
+    if (pontos > melhorPontos){ melhorPontos = pontos; melhor = r; }
+  });
+  if (!melhor) return respostaNaoSei(pergunta);
+  try { return melhor.fn(); } catch(e){ return respostaNaoSei(pergunta); }
+}
+
+/* ---------- Interface do chat ---------- */
+var painelChat = document.getElementById('painel-chat');
+var botaoChat = document.getElementById('botao-chat');
+var mensagens = document.getElementById('chat-mensagens');
+var form = document.getElementById('chat-form');
+var input = document.getElementById('chat-input');
+var sugestoesBox = document.getElementById('chat-sugestoes');
+var jaAbriu = false;
+
+function adicionarMensagem(quem, conteudo){
+  var div = el('div', {class:'msg ' + quem});
+  if (typeof conteudo === 'string'){
+    div.innerHTML = conteudo;
+  } else {
+    div.innerHTML = conteudo.texto;
+    if (conteudo.fonte) div.appendChild(el('span', {class:'fontes', text: conteudo.fonte}));
+    if (conteudo.limite) div.appendChild(el('span', {class:'fontes', html:'<b>O que não dá para concluir:</b> ' + conteudo.limite}));
+  }
+  mensagens.appendChild(div);
+  mensagens.scrollTop = mensagens.scrollHeight;
+}
+
+function perguntar(texto){
+  if (!texto.trim()) return;
+  adicionarMensagem('usuario', texto);
+  var r = responder(texto);
+  setTimeout(function(){ adicionarMensagem('agente', r); }, 220);
+}
+
+function abrirChat(){
+  painelChat.classList.add('aberto');
+  botaoChat.setAttribute('aria-expanded','true');
+  input.focus();
+  if (!jaAbriu){
+    jaAbriu = true;
+    adicionarMensagem('agente',
+      'Posso responder sobre faturamento, pedidos, pizzas, valor médio por pedido, dias, horários, tamanhos, categorias, sabores, preços, a comparação entre 2025 e 2026 e a previsão.' +
+      '<br>As respostas saem dos dados deste painel. Quando algo não está na base, eu digo.');
+  }
+}
+
+botaoChat.addEventListener('click', function(){
+  if (painelChat.classList.contains('aberto')){ painelChat.classList.remove('aberto'); botaoChat.setAttribute('aria-expanded','false'); }
+  else abrirChat();
+});
+document.getElementById('fechar-chat').addEventListener('click', function(){
+  painelChat.classList.remove('aberto'); botaoChat.setAttribute('aria-expanded','false');
+});
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  var texto = input.value;
+  input.value = '';
+  perguntar(texto);
+});
+
+D.sugestoes.forEach(function(s){
+  var b = el('button', {type:'button', text:s});
+  b.addEventListener('click', function(){ abrirChat(); perguntar(s); });
+  sugestoesBox.appendChild(b);
+});
+
+// Permite abrir o painel já com uma pergunta: index.html?q=qual+o+horario+de+pico
+(function(){
+  var params = new URLSearchParams(location.search);
+  var perguntaInicial = params.get('q');
+  if (perguntaInicial){
+    abrirChat();
+    perguntar(perguntaInicial);
+  }
+})();
+
+})();
+</script>
+</body>
+</html>
