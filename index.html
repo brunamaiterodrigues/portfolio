@@ -559,7 +559,7 @@
 
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
       gap: 28px;
     }
 
@@ -827,6 +827,7 @@
         <a href="#sobre" class="nav-link" data-i18n="nav_about">Sobre</a>
         <a href="#trajetoria" class="nav-link" data-i18n="nav_career">Trajetória</a>
         <a href="#projetos" class="nav-link" data-i18n="nav_activities">Atividades & Projetos</a>
+        <a href="#graduacao" class="nav-link" data-i18n="nav_graduation">Projetos Graduação</a>
         <a href="#contato" class="nav-link" data-i18n="nav_contact">Contato</a>
         <a href="https://www.linkedin.com/in/brunamaite/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 8px 18px; font-size: 0.85rem;">
           LinkedIn ↗
@@ -1124,8 +1125,90 @@
   </section>
 
   <!-- ==========================================================================
-       CONTATO & REDES
+       PROJETOS GRADUAÇÃO — ENTREGÁVEIS DA PIZZARIA DO VITTO
        ========================================================================== -->
+  <section class="projects-section" id="graduacao">
+    <div class="container">
+      <div class="section-title-wrap">
+        <div class="badge-pill" data-i18n="grad_badge">Estudos Aplicados • Universidade Atitus</div>
+        <h2 class="section-title" data-i18n="grad_heading">Projetos Graduação</h2>
+        <p class="section-desc" data-i18n="grad_subheading">
+          Trabalhos aplicados de análise de dados sobre os registros de vendas da Pizzaria do Vitto. Estudo acadêmico, com dados reais, escrito para quem não é da área de estatística.
+        </p>
+      </div>
+
+      <div class="projects-grid">
+
+        <!-- Entregável 1: Relatório estatístico -->
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-badge" data-i18n="grad_report_badge">Relatório Estatístico • PDF</span>
+            <h3 class="project-title" data-i18n="grad_report_title">Relatório estatístico dos dados da Pizzaria do Vitto</h3>
+            <p class="project-desc" data-i18n="grad_report_desc">
+              Documento de até 10 páginas com faturamento, volume de pedidos, horários de maior movimento, mix de sabores e tamanhos, preços praticados e a comparação entre 2025 e 2026. Cada número vem com o período, a base de cálculo e o que os dados não permitem concluir.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">Análise de Dados</span>
+              <span class="project-tag">R</span>
+              <span class="project-tag">Estatística Descritiva</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Pizzaria do Vitto</span>
+            <a href="relatorios/relatorio-pizzaria-vitto.pdf" target="_blank" rel="noopener noreferrer" class="project-link">
+              <span data-i18n="grad_report_link">Abrir relatório (PDF)</span> →
+            </a>
+          </div>
+        </article>
+
+        <!-- Entregável 2: Versão em slides -->
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-badge" data-i18n="grad_slides_badge">Versão em Slides • PDF</span>
+            <h3 class="project-title" data-i18n="grad_slides_title">Versão em slides do relatório da Pizzaria do Vitto</h3>
+            <p class="project-desc" data-i18n="grad_slides_desc">
+              Apresentação objetiva com os mesmos achados do relatório, organizada para exposição em sala e para leitura executiva: um achado por slide, com o número principal e a faixa provável ao lado.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">Apresentação</span>
+              <span class="project-tag">Quarto</span>
+              <span class="project-tag">Comunicação Executiva</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Pizzaria do Vitto</span>
+            <a href="relatorios/apresentacao-pizzaria-vitto.pdf" target="_blank" rel="noopener noreferrer" class="project-link">
+              <span data-i18n="grad_slides_link">Abrir apresentação (PDF)</span> →
+            </a>
+          </div>
+        </article>
+
+        <!-- Entregável 3: Dashboard -->
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-badge" data-i18n="grad_dash_badge">Dashboard Interativo • Disponível</span>
+            <h3 class="project-title" data-i18n="grad_dash_title">Dashboard dos dados da Pizzaria do Vitto</h3>
+            <p class="project-desc" data-i18n="grad_dash_desc">
+              Painel web com os indicadores do negócio, estimativa para as próximas 12 semanas por modelo de série temporal e um assistente que responde perguntas em português sobre os dados, sem inventar números.
+            </p>
+            <div class="project-tags">
+              <span class="project-tag">Dashboard</span>
+              <span class="project-tag">Série Temporal</span>
+              <span class="project-tag">Chat sobre os Dados</span>
+            </div>
+          </div>
+          <div class="project-footer">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Pizzaria do Vitto</span>
+            <a href="dashboard/index.html" class="project-link">
+              <span data-i18n="grad_dash_link">Abrir dashboard</span> →
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
   <section class="contact-section" id="contato">
     <div class="container">
       <div class="contact-inner">
@@ -1262,6 +1345,24 @@
         card5_desc: "Participação ativa em palestras e debates sobre o mercado contemporâneo, empreendedorismo e a aceleração das transformações no ambiente empresarial.",
         card5_tag: "Atividade LinkedIn",
 
+        nav_graduation: "Projetos Graduação",
+        grad_badge: "Estudos Aplicados • Universidade Atitus",
+        grad_heading: "Projetos Graduação",
+        grad_subheading: "Trabalhos aplicados de análise de dados sobre os registros de vendas da Pizzaria do Vitto. Estudo acadêmico, com dados reais, escrito para quem não é da área de estatística.",
+        grad_report_badge: "Relatório Estatístico • PDF",
+        grad_report_title: "Relatório estatístico dos dados da Pizzaria do Vitto",
+        grad_report_desc: "Documento de até 10 páginas com faturamento, volume de pedidos, horários de maior movimento, mix de sabores e tamanhos, preços praticados e a comparação entre 2025 e 2026. Cada número vem com o período, a base de cálculo e o que os dados não permitem concluir.",
+        grad_slides_badge: "Versão em Slides • PDF",
+        grad_slides_title: "Versão em slides do relatório da Pizzaria do Vitto",
+        grad_slides_desc: "Apresentação objetiva com os mesmos achados do relatório, organizada para exposição em sala e para leitura executiva: um achado por slide, com o número principal e a faixa provável ao lado.",
+        grad_dash_badge: "Dashboard Interativo • Disponível",
+        grad_dash_title: "Dashboard dos dados da Pizzaria do Vitto",
+        grad_dash_desc: "Painel web com os indicadores do negócio, estimativa para as próximas 12 semanas por modelo de série temporal e um assistente que responde perguntas em português sobre os dados, sem inventar números.",
+        grad_dash_link: "Abrir dashboard",
+        grad_report_link: "Abrir relatório (PDF)",
+        grad_slides_link: "Abrir apresentação (PDF)",
+        grad_pending: "Versão em PDF em produção",
+
         link_view: "LinkedIn",
         contact_heading: "Vamos nos conectar profissionalmente?",
         contact_desc: "Estou disponível para diálogo, troca de experiências sobre administração e novas conexões na área de gestão e processos.",
@@ -1351,6 +1452,24 @@
         card5_desc: "Engaged participation in discussions analyzing contemporary market dynamics, business innovation, and agile transformation across firms.",
         card5_tag: "LinkedIn Activity",
 
+        nav_graduation: "Graduation Projects",
+        grad_badge: "Applied Studies • Atitus University",
+        grad_heading: "Graduation Projects",
+        grad_subheading: "Applied data analysis projects built on sales records from Pizzaria do Vitto. An academic study using real data, written for readers outside statistics.",
+        grad_report_badge: "Statistical Report • PDF",
+        grad_report_title: "Statistical report on Pizzaria do Vitto data",
+        grad_report_desc: "A document of up to 10 pages covering revenue, order volume, peak hours, the mix of flavors and sizes, practiced prices, and the 2025 versus 2026 comparison. Every number carries its period, its calculation base, and what the data cannot conclude.",
+        grad_slides_badge: "Slide Version • PDF",
+        grad_slides_title: "Slide version of the Pizzaria do Vitto report",
+        grad_slides_desc: "A focused presentation with the same findings as the report, organized for classroom delivery and executive reading: one finding per slide, with the headline number and its likely range side by side.",
+        grad_dash_badge: "Interactive Dashboard • Available",
+        grad_dash_title: "Pizzaria do Vitto data dashboard",
+        grad_dash_desc: "A web dashboard with the business indicators, a 12-week time-series forecast, and an assistant that answers questions in Portuguese about the data without inventing numbers.",
+        grad_dash_link: "Open dashboard",
+        grad_report_link: "Open report (PDF)",
+        grad_slides_link: "Open presentation (PDF)",
+        grad_pending: "PDF version in progress",
+
         link_view: "LinkedIn",
         contact_heading: "Let's connect professionally",
         contact_desc: "I am open to constructive dialogues, exchanging ideas regarding business administration, and discovering new opportunities in process management.",
@@ -1427,7 +1546,7 @@
     // 4. FILTROS DE PROJETOS E ATIVIDADES
     // ---------------------------------------------------------
     const filterButtons = document.querySelectorAll('.filter-btn');
-    const projectCards = document.querySelectorAll('.project-card');
+    const projectCards = document.querySelectorAll('#projectsGrid .project-card');
 
     filterButtons.forEach(button => {
       button.addEventListener('click', () => {

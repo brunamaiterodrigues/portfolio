@@ -1,0 +1,281 @@
+---
+lang: pt-BR
+format:
+  pdf:
+    pdf-engine: xelatex
+    documentclass: article
+    classoption: [10pt]
+    geometry:
+      - top=2.0cm
+      - bottom=2.0cm
+      - left=2.1cm
+      - right=2.1cm
+    mainfont: "Segoe UI"
+    mainfontoptions:
+      - "Numbers=OldStyle"
+    colorlinks: true
+    linkcolor: violeta
+    urlcolor: violeta
+    include-in-header: cabecalho.tex
+    toc: false
+    number-sections: false
+    fig-cap-location: bottom
+    fig-pos: "H"
+---
+
+```{=latex}
+\begin{titlepage}
+\thispagestyle{empty}
+\sffamily
+\vspace*{1.2cm}
+
+{\color{violeta}\bfseries\footnotesize PIZZARIA DO VITTO \quad·\quad ANÁLISE APLICADA}
+
+\vspace{10pt}
+{\color{violeta}\rule{\textwidth}{2.4pt}}
+
+\vspace{26pt}
+{\color{navy}\bfseries\fontsize{38}{42}\selectfont Relatório estatístico\\[4pt] das vendas}
+
+\vspace{16pt}
+{\color{cinza}\fontsize{15}{20}\selectfont O que 358 dias de registro mostram sobre o negócio}
+
+\vspace{34pt}
+{\color{navy}\rule{4cm}{1pt}}
+
+\vspace{18pt}
+\begin{tabular}{@{}ll@{}}
+{\color{cinza}\footnotesize PERÍODO} & {\color{navy}1º de janeiro de 2025 a 3 de agosto de 2026} \\[7pt]
+{\color{cinza}\footnotesize BASE} & {\color{navy}48.620 linhas de venda · 21.350 pedidos · 49.574 pizzas} \\[7pt]
+{\color{cinza}\footnotesize REGISTRO} & {\color{navy}358 dias com venda anotada, em 580 dias corridos} \\[7pt]
+{\color{cinza}\footnotesize GERAÇÃO} & {\color{navy}Novembro de 2026} \\
+\end{tabular}
+
+\vfill
+
+{\color{violeta}\rule{\textwidth}{0.8pt}}
+\vspace{6pt}
+
+{\color{cinza}\footnotesize
+Documento de leitura para o dono da pizzaria e a equipe. Sem custos na base, os valores são de faturamento, não de lucro.
+Os números vêm dos registros de venda e foram calculados em R; o método está na última página.
+\par}
+
+\end{titlepage}
+```
+
+# Se você ler só esta página
+
+**Em 358 dias com registro, a pizzaria faturou R\$ 4,09 milhões e recebeu 21.350 pedidos.** O valor médio por pedido ficou em **R\$ 192**, com faixa provável de **R\$ 189 a R\$ 194**. São quase 50 mil pizzas vendidas no período.
+
+**O movimento é estável ao longo da semana.** Nenhum dia da semana se destaca: a média fica entre **58 e 61 pedidos por dia registrado** de domingo a sábado. O que muda é a hora: o jantar, de 17h às 21h, concentra **39 de cada 100 pedidos**.
+
+**O tamanho G responde por 38 de cada 100 pizzas vendidas.** O M vem em seguida, com 32; o P, com 29; e o GG, com apenas 1. As quatro categorias do cardápio ficam próximas: Clássica 30, Especial 24, Vegetariana 24 e Frango 22 a cada 100 pizzas.
+
+**O cardápio é longo e a concentração é baixa.** São 32 sabores cadastrados, e os 5 mais vendidos somam **24 de cada 100 pizzas**. O primeiro colocado, Especial da Casa, responde por 5 de cada 100 pizzas.
+
+**A comparação entre 2025 e 2026 não mostra mudança relevante.** No mesmo intervalo de calendário, o faturamento por dia registrado variou **-1%**, dentro da faixa provável de -R\$ 589 a +R\$ 369. A diferença pode ser apenas variação normal do movimento.
+
+```{=latex}
+\begin{limite}
+\textbf{\color{navy}O que esta página não diz.} Não há custo na base, então nenhum valor aqui é lucro ou margem. Também não há identificação de cliente, dados de entrega ou estoque. E 222 dias do período não têm registro: não são dias sem venda, apenas dias sem anotação.
+\end{limite}
+```
+
+# O negócio em números
+
+O período vai de 1º de janeiro de 2025 a 3 de agosto de 2026. São 580 dias corridos, dos quais **358 têm pelo menos uma venda anotada**. Os 222 dias restantes não entram nas médias: tratá-los como venda zero puxaria todos os indicadores para baixo e criaria uma queda que não existe.
+
+**Faturamento total: R\$ 4.089.300,25.** É a soma de todas as linhas de venda, ou seja, receita. Não é lucro, porque a base não tem custo de ingrediente, equipe, aluguel ou taxa.
+
+**Pedidos: 21.350.** Cada pedido pode ter várias linhas; uma linha é um item, não um pedido. Em média, cada pedido leva **2,32 pizzas**, com faixa provável de 2,30 a 2,35.
+
+**Valor médio por pedido: R\$ 191,54.** Faixa provável de R\$ 189,48 a R\$ 193,59. É o valor do pedido inteiro, não o preço de uma pizza.
+
+**Faturamento por dia com registro: R\$ 11.422,63.** Faixa provável de R\$ 11.212 a R\$ 11.633. Este é o número que deve ser usado para comparação entre períodos, nunca o total dividido por 580.
+
+```{=latex}
+\begin{destaque}
+\textbf{\color{navy}Como ler a faixa provável.} A faixa mostra a margem de variação de um número estimado. Se o mesmo processo de vendas fosse observado em outro conjunto parecido de dias, o valor tenderia a cair dentro de uma faixa como esta. Não é garantia e não significa ``95\% de chance de o valor estar aqui''.
+\end{destaque}
+```
+
+# Faturamento e volume
+
+O faturamento mensal fica entre **R\$ 195 mil e R\$ 237 mil** nos meses completos. Agosto de 2026 aparece com apenas 2 dias registrados e, por isso, não deve ser lido como mês fraco.
+
+```{r}
+#| echo: false
+#| out-width: 94%
+knitr::include_graphics(here::here("figuras", "mensal.png"))
+```
+
+O mês de maior faturamento registrado é **outubro de 2025**, com R\$ 237.146,75 em 20 dias. O menor entre os meses completos é **janeiro de 2026**, com R\$ 203.861,00 em 19 dias. A diferença entre eles é de cerca de 14%, mas parte disso pode vir do número diferente de dias e do movimento normal do período.
+
+O volume acompanha o faturamento, porque o preço médio por pizza varia pouco: **R\$ 82,49** no período inteiro. Isso significa que, para aumentar o faturamento, o caminho mais direto nos dados é vender mais pizzas, não cobrar mais por pizza.
+
+```{=latex}
+\begin{limite}
+\textbf{\color{navy}O que não dá para concluir.} Meses com poucos dias registrados não são meses de venda baixa. A base não distingue folga, falha de anotação ou recorte do período. Também não é possível comparar o faturamento com a inflação: os valores estão em reais correntes.
+\end{limite}
+```
+
+# Quando vendemos
+
+Os pedidos se distribuem entre 10h e 23h, com dois picos claros. O maior é às **12h, com 2.520 pedidos**, seguido por **13h, com 2.455**. No fim da tarde, o movimento sobe de novo: 17h tem 2.336 e 18h tem 2.399.
+
+```{r}
+#| echo: false
+#| out-width: 94%
+knitr::include_graphics(here::here("figuras", "horas.png"))
+```
+
+Agrupando por faixa, o **jantar (17h às 21h) concentra 8.386 pedidos, ou 39 de cada 100**. O **almoço (11h às 14h) fica com 29 de cada 100**. A tarde (14h às 17h) responde por 23 e a noite depois das 21h, por 9.
+
+```{=latex}
+\needspace{9\baselineskip}
+```
+
+O horário é o do registro do pedido, não o da entrega. A base não tem horário de saída nem de chegada, então não é possível medir tempo de preparo ou de entrega.
+
+```{=latex}
+\begin{limite}
+\textbf{\color{navy}O que não dá para concluir.} Um pico de pedidos não prova cozinha sobrecarregada: falta o tempo de preparo. Também não se sabe se o cliente que pede às 12h é o mesmo que pede às 19h, porque não há identificação de cliente.
+\end{limite}
+```
+
+# O que vendemos
+
+O tamanho **G é o mais vendido: 18.956 pizzas, ou 38 de cada 100**. O M vem logo atrás, com 15.635 (32 de cada 100), e o P, com 14.403 (29). O GG é uma exceção no cardápio: 580 pizzas, pouco mais de 1 em cada 100.
+
+```{r}
+#| echo: false
+#| out-width: 94%
+knitr::include_graphics(here::here("figuras", "mix.png"))
+```
+
+As quatro categorias são equilibradas. Clássica lidera com 30 de cada 100 pizzas, seguida por Especial (24), Vegetariana (24) e Frango (22). Essa distribuição próxima sugere um cardápio sem uma categoria dominante, o que pode ser útil para planejar compras e evitar dependência de um único tipo de ingrediente.
+
+O preço médio por pizza cresce com o tamanho: **P R\$ 61,82; M R\$ 79,75; G R\$ 99,00; GG R\$ 130,02**. São valores efetivamente cobrados, já com promoções, e não o preço de cardápio.
+
+```{=latex}
+\begin{limite}
+\textbf{\color{navy}O que não dá para concluir.} Popularidade não é rentabilidade: a base não tem custo por sabor ou tamanho. A participação também pode refletir promoção e posição no cardápio, não preferência do cliente.
+\end{limite}
+```
+
+# Concentração
+
+São **32 sabores cadastrados**. Os cinco mais vendidos somam 12.096 pizzas, ou **24 de cada 100**. O primeiro, Especial da Casa, tem 2.453 pizzas (5 de cada 100); o segundo, Frango com Barbecue, 2.432.
+
+```{r}
+#| echo: false
+#| out-width: 94%
+knitr::include_graphics(here::here("figuras", "sabores.png"))
+```
+
+A curva é longa e plana: nenhum sabor se distancia muito dos demais. Entre o primeiro e o décimo colocado há uma diferença de cerca de 25%, pequena para um cardápio desse tamanho. Isso é consistente com uma operação que vende um pouco de tudo, em vez de depender de poucos campeões.
+
+Para o dia a dia, isso significa que cortar um sabor de baixo volume tem efeito pequeno no total, mas também que nenhum sabor isolado sustenta o negócio sozinho. É uma leitura de volume, não de lucro.
+
+```{=latex}
+\begin{limite}
+\textbf{\color{navy}O que não dá para concluir.} Não se sabe qual sabor deixa mais margem. Também não é possível separar o efeito de promoção do efeito de preferência: a base registra o que foi vendido, não o que foi oferecido.
+\end{limite}
+```
+
+# Preços
+
+O preço unitário varia bastante dentro do mesmo tamanho, o que é esperado em uma base com promoções. O tamanho **P vai de R\$ 48,75 a R\$ 118,25**, com valor típico de R\$ 60. O **GG vai de R\$ 127,50 a R\$ 179,75**, com típico de R\$ 127,50.
+
+```{r}
+#| echo: false
+#| out-width: 94%
+knitr::include_graphics(here::here("figuras", "precos.png"))
+```
+
+```{=latex}
+\begin{center}
+\sffamily\footnotesize
+\begin{tabular}{lrrrr}
+\toprule
+{\color{navy}\bfseries Tamanho} & {\color{navy}\bfseries Mínimo} & {\color{navy}\bfseries Valor típico} & {\color{navy}\bfseries Máximo} & {\color{navy}\bfseries Média} \\
+\midrule
+P  & R\$ 48,75   & R\$ 60,00   & R\$ 118,25 & R\$ 61,82 \\
+M  & R\$ 62,50   & R\$ 81,25   & R\$ 83,75  & R\$ 79,76 \\
+G  & R\$ 76,25   & R\$ 102,50  & R\$ 105,00 & R\$ 99,01 \\
+GG & R\$ 127,50  & R\$ 127,50  & R\$ 179,75 & R\$ 130,06 \\
+\bottomrule
+\end{tabular}
+\end{center}
+```
+
+O valor típico é a mediana: metade dos registros ficou acima, metade abaixo. Ele é mais estável que a média quando existem promoções ou valores fora do padrão.
+
+O preço médio por pizza no período é **R\$ 82,49**. Como o mix é dominado por G e M, esse número fica entre o preço típico desses dois tamanhos.
+
+```{=latex}
+\begin{limite}
+\textbf{\color{navy}O que não dá para concluir.} Preço não é margem. Sem custo de ingredientes e de operação, não se sabe quanto sobra por pizza. Também não é possível separar o preço de tabela do preço promocional.
+\end{limite}
+```
+
+# 2025 vs 2026
+
+Para comparar os dois anos sem distorção, o recorte é o mesmo nos dois: **1º de janeiro a 3 de agosto**. Mesmo assim, o número de dias com registro é bem diferente: **230 em 2025 e 128 em 2026**. Por isso a comparação é feita por médias, não por totais.
+
+```{=latex}
+\begin{center}
+\sffamily\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+{\color{navy}\bfseries Indicador} & {\color{navy}\bfseries 2025} & {\color{navy}\bfseries 2026} & {\color{navy}\bfseries Variação} \\
+\midrule
+Dias com registro            & 230            & 128            & -44\% \\
+Faturamento no recorte       & R\$ 2.636.226  & R\$ 1.453.075  & -45\% \\
+Pedidos                      & 13.832         & 7.518          & -46\% \\
+Faturamento por dia          & R\$ 11.462     & R\$ 11.352     & -1,0\% \\
+Pedidos por dia              & 60,1           & 58,7           & -2,3\% \\
+Valor médio por pedido       & R\$ 190,59     & R\$ 193,28     & +1,4\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+```
+
+As três diferenças por média têm faixas prováveis que **incluem o zero**: faturamento por dia de -R\$ 589 a +R\$ 369, pedidos por dia de -3,8 a +1,0 e valor por pedido de -R\$ 1,67 a +R\$ 7,05. Quando a faixa inclui o zero, a mudança observada pode ser apenas variação normal. Esta análise, portanto, **não afirma aumento nem queda**.
+
+A queda de 44% nos dias registrados é o fato mais forte do recorte. Ela pode indicar mudança na operação, folga em períodos específicos ou falha de anotação. A base não permite distinguir essas hipóteses.
+
+```{=latex}
+\begin{limite}
+\textbf{\color{navy}O que não dá para concluir.} Comparar totais brutos diria mais sobre a anotação do que sobre as vendas. Também não há ajuste pela inflação: os valores estão em reais correntes.
+\end{limite}
+```
+
+```{=latex}
+\needspace{16\baselineskip}
+```
+
+# Próximos passos, limitações e nota técnica
+
+**Limitações da base.** Não há custo, identificação de cliente, dados de entrega, estoque, pedidos recusados ou capacidade da cozinha. Não há registro do que deixou de ser vendido. E 222 dias do período não têm anotação.
+
+**O que os dados respondem bem.** Faturamento e volume por período; sabores, tamanhos e categorias mais vendidos; dias e horários de movimento; valor médio por pedido; participação de cada item; mudança do mix; tendência e estimativa para frente.
+
+**O que não respondem.** Lucro, margem, recompra, fidelidade, tempo de entrega, desperdício, demanda não atendida e efeito causal de preço ou promoção. Para essas perguntas, seria preciso coletar custo por item, cadastro de cliente e horários de saída e entrega.
+
+```{r}
+#| echo: false
+#| out-width: 92%
+knitr::include_graphics(here::here("figuras", "previsao.png"))
+```
+
+**Estimativa para frente.** A previsão usa tendência amortecida sobre a receita média por dia registrado em cada semana, com 12 semanas de horizonte. O erro médio nas 8 semanas de teste foi de **R\$ 1.294 por dia**, para um movimento típico de R\$ 11.423. As últimas 4 semanas, porém, ficaram em **R\$ 9.837 por dia**, abaixo da média do período. O modelo projeta retorno à média (cerca de R\$ 11.370), e essa é a parte mais frágil da estimativa.
+
+**Sugestões, como opinião.** Vale investigar por que a cobertura de registro caiu em 2026. Vale também padronizar a anotação de horário e quantidade, que hoje têm falhas pontuais. Nenhuma das duas ações depende de dado novo.
+
+```{=latex}
+\begin{destaque}
+\textbf{\color{navy}Nota técnica.} As faixas prováveis usam 95\% de confiança com fórmulas simples: média $\pm$ 1,96 $\times$ variação $\div$ raiz do número de casos. Para proporções, foi usado o intervalo de Wilson. As médias são calculadas por pedido e por dia com registro, nunca por linha. A limpeza tratou 1 linha sem quantidade (preenchida com 1 unidade) e 1 pedido com horários divergentes (usado o primeiro horário). Os scripts estão em \texttt{R/} e reproduzem todos os números deste relatório.
+\end{destaque}
+```

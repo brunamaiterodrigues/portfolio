@@ -32,3 +32,20 @@ Conferidos em 19/11/2026 e reproduzidos pelos scripts:
 4. **Todas as diferenças entre anos incluem o zero na faixa provável.** Ou seja: a análise não afirma aumento nem queda.
 5. **Previsão frágil.** As últimas 4 semanas registradas ficaram em R$ 9.837 por dia contra R$ 11.398 de média do período. O modelo projeta retorno à média. Se o movimento recente continuar, a estimativa estará alta.
 6. **Sem custos, sem cliente, sem entrega, sem estoque.** Nenhuma conclusão sobre lucro, fidelidade, tempo de entrega ou desperdício.
+
+## Entregáveis publicados (2026-11-26)
+
+| Item | Arquivo | Estado |
+|---|---|---|
+| Relatório estatístico | `relatorios/relatorio-pizzaria-vitto.pdf` | Publicado, 7 páginas |
+| Versão em slides | `relatorios/apresentacao-pizzaria-vitto.pdf` | Publicado, 14 slides (beamer 16:9) |
+| Dashboard | `dashboard/index.html` | Publicado |
+
+Fontes: `relatorios/fontes/relatorio.qmd` e `relatorios/slides/apresentacao.qmd` (Quarto + XeLaTeX).
+Figuras: `R/03-figuras.R` gera `figuras/*.png` (relatório) e `figuras/slides/*.png` (slides, sem título para não repetir o título do slide).
+
+Decisões de apresentação:
+
+- O relatório tem 7 páginas e cada seção carrega a caixa "O que não dá para concluir".
+- O gráfico de previsão mostra a queda real das últimas semanas; a linha estimada não se conecta ao último ponto observado.
+- Nas slides, cada bloco de destaque é uma caixa LaTeX (não um `div` Markdown), porque o tema beamer não estiliza `div` customizado.

@@ -1,0 +1,261 @@
+---
+title: "Pizzaria do Vitto"
+subtitle: "O que 358 dias de vendas mostram"
+author: "Bruna Maitê"
+lang: pt-BR
+format:
+  beamer:
+    pdf-engine: xelatex
+    aspectratio: 169
+    theme: default
+    navigation: empty
+    mainfont: "Segoe UI"
+    include-in-header: slides-cabecalho.tex
+    incremental: false
+---
+
+## A base em uma frase
+
+```{=latex}
+\begin{columns}[T,onlytextwidth]
+\column{0.55\textwidth}
+```
+
+**48.620 linhas de venda** viraram **21.350 pedidos** e **49.574 pizzas**, de 1º de janeiro de 2025 a 3 de agosto de 2026.
+
+- 358 dias com registro, em 580 dias corridos
+- 32 sabores, 4 tamanhos, 4 categorias
+- 1 linha sem quantidade
+- 1 pedido com horário divergente
+
+```{=latex}
+\column{0.43\textwidth}
+```
+
+```{=latex}
+\begin{nota}
+{\Large\bfseries\color{violeta}358}\\[2pt]
+dias com registro\\[8pt]
+{\Large\bfseries\color{violeta}222}\\[2pt]
+dias sem anotação
+\end{nota}
+```
+
+```{=latex}
+\end{columns}
+```
+
+```{=latex}
+\begin{nota}
+Dia sem registro não é dia sem venda. Todas as médias usam apenas os dias com anotação.
+\end{nota}
+```
+
+## Se você ler só esta página
+
+```{=latex}
+\begin{destaque}
+{\Large\bfseries\color{navy}R\$ 4,09 milhões} de faturamento em 358 dias com registro.\\[4pt]
+{\Large\bfseries\color{navy}R\$ 192 por pedido}, com faixa provável de R\$ 189 a R\$ 194.
+\end{destaque}
+```
+
+- O jantar, de 17h às 21h, concentra **39 de cada 100 pedidos**
+- O tamanho **G** responde por **38 de cada 100 pizzas**
+- Os **5 sabores** mais vendidos somam **24 de cada 100 pizzas**, em 32
+- **2025 e 2026** têm médias praticamente iguais no mesmo intervalo
+
+## O negócio em números
+
+```{=latex}
+\begin{center}
+\sffamily\small
+\begin{tabular}{@{}l@{\hspace{2.2cm}}r@{}}
+\toprule
+{\color{navy}\bfseries Indicador} & {\color{navy}\bfseries Valor} \\
+\midrule
+Faturamento no período         & R\$ 4.089.300,25 \\
+Pedidos                        & 21.350 \\
+Pizzas vendidas                & 49.574 \\
+Valor médio por pedido         & R\$ 191,54 \\
+Pizzas por pedido              & 2,32 \\
+Faturamento por dia registrado & R\$ 11.422,63 \\
+\bottomrule
+\end{tabular}
+\end{center}
+```
+
+```{=latex}
+\begin{nota}
+Faixas prováveis: valor por pedido de R\$ 189,48 a R\$ 193,59; pizzas por pedido de 2,30 a 2,35; faturamento por dia de R\$ 11.212 a R\$ 11.633.\\[3pt]
+Faturamento é receita, não lucro: a base não tem custos.
+\end{nota}
+```
+
+## Faturamento mês a mês
+
+```{r}
+#| echo: false
+#| out-width: 88%
+knitr::include_graphics(here::here("figuras", "slides", "mensal.png"))
+```
+
+Meses completos ficam entre **R\$ 195 mil e R\$ 237 mil**. Agosto de 2026 tem só 2 dias registrados e não deve ser lido como mês fraco.
+
+## Quando vendemos
+
+```{r}
+#| echo: false
+#| out-width: 92%
+knitr::include_graphics(here::here("figuras", "slides", "horas.png"))
+```
+
+Pico às **12h (2.520 pedidos)** e segundo pico às **13h (2.455)**. O movimento volta a subir às 17h e 18h.
+
+## Almoço e jantar
+
+```{=latex}
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+{\color{violeta}\bfseries Jantar (17h às 21h)}\\[2pt]
+{\Large\bfseries 8.386 pedidos}\\[1pt]
+39 de cada 100 pedidos\\[14pt]
+{\color{violeta}\bfseries Noite (depois das 21h)}\\[2pt]
+{\Large\bfseries 1.889 pedidos}\\[1pt]
+9 de cada 100 pedidos
+\column{0.47\textwidth}
+{\color{violeta}\bfseries Almoço (11h às 14h)}\\[2pt]
+{\Large\bfseries 6.206 pedidos}\\[1pt]
+29 de cada 100 pedidos\\[14pt]
+{\color{violeta}\bfseries Tarde (14h às 17h)}\\[2pt]
+{\Large\bfseries 4.860 pedidos}\\[1pt]
+23 de cada 100 pedidos
+\end{columns}
+```
+
+```{=latex}
+\begin{nota}
+Horário do registro do pedido, não o da entrega. A base não tem tempo de preparo nem de entrega.
+\end{nota}
+```
+
+## O que vendemos
+
+```{r}
+#| echo: false
+#| out-width: 80%
+knitr::include_graphics(here::here("figuras", "slides", "mix.png"))
+```
+
+O **G** lidera com 38 de cada 100 pizzas; M, 32; P, 29; GG, 1. As quatro categorias ficam entre 22 e 30 de cada 100.
+
+## Concentração
+
+```{r}
+#| echo: false
+#| out-width: 86%
+knitr::include_graphics(here::here("figuras", "slides", "sabores.png"))
+```
+
+São **32 sabores** e os 5 primeiros somam **24 de cada 100 pizzas**. Nenhum sabor domina: o primeiro responde por 5 de cada 100.
+
+## Preços
+
+```{r}
+#| echo: false
+#| out-width: 92%
+knitr::include_graphics(here::here("figuras", "slides", "precos.png"))
+```
+
+O preço varia dentro do mesmo tamanho por causa das promoções. O **valor típico** é mais estável que a média: P R\$ 60, M R\$ 81, G R\$ 102 e GG R\$ 128.
+
+## 2025 vs 2026
+
+```{=latex}
+\small
+\begin{center}
+\sffamily\footnotesize
+\begin{tabular}{@{}l@{\hspace{1.1cm}}r@{\hspace{1.1cm}}r@{\hspace{1.1cm}}r@{}}
+\toprule
+{\color{navy}\bfseries Indicador} & {\color{navy}\bfseries 2025} & {\color{navy}\bfseries 2026} & {\color{navy}\bfseries Variação} \\
+\midrule
+Dias com registro      & 230        & 128        & -44\% \\
+Faturamento no recorte & R\$ 2,64 mi & R\$ 1,45 mi & -45\% \\
+Pedidos                & 13.832     & 7.518      & -46\% \\
+Faturamento por dia    & R\$ 11.462 & R\$ 11.352 & -1,0\% \\
+Pedidos por dia        & 60,1       & 58,7       & -2,3\% \\
+Valor médio por pedido & R\$ 190,59 & R\$ 193,28 & +1,4\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+\normalsize
+```
+
+Mesmo recorte de calendário: 1º de janeiro a 3 de agosto.
+
+```{=latex}
+\begin{destaque}
+As três faixas prováveis \textbf{incluem o zero}. Esta análise não afirma aumento nem queda.
+\end{destaque}
+```
+
+## Estimativa para frente
+
+```{r}
+#| echo: false
+#| out-width: 84%
+knitr::include_graphics(here::here("figuras", "slides", "previsao.png"))
+```
+
+Estimativa de **R\$ 11.371 por dia** na primeira semana, com faixa de R\$ 9.437 a R\$ 13.305. Erro médio nas 8 semanas de teste: **R\$ 1.294 por dia**.
+
+```{=latex}
+\begin{nota}
+As últimas 4 semanas ficaram em R\$ 9.837 por dia, abaixo da média. O modelo projeta retorno à média: é a parte mais frágil.
+\end{nota}
+```
+
+## O que não dá para concluir
+
+```{=latex}
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+{\color{navy}\bfseries Não há na base:}
+\begin{itemize}
+  \item custo de ingredientes ou operação
+  \item identificação de cliente
+  \item tempo de entrega
+  \item estoque e desperdício
+  \item pedidos recusados
+\end{itemize}
+\column{0.50\textwidth}
+{\color{navy}\bfseries Portanto, não é possível afirmar:}
+\begin{itemize}
+  \item qual sabor dá mais lucro
+  \item quantos clientes voltaram
+  \item se uma promoção funcionou
+  \item se a cozinha dá conta do pico
+  \item qual será o faturamento futuro
+\end{itemize}
+\end{columns}
+```
+
+## Fechamento
+
+```{=latex}
+\begin{destaque}
+{\color{navy}\bfseries Três leituras que os dados sustentam:}
+\begin{enumerate}
+  \item O negócio fatura de forma estável, sem dia da semana dominante.
+  \item O jantar é o principal momento de venda.
+  \item O cardápio é longo, equilibrado e sem um campeão isolado.
+\end{enumerate}
+\end{destaque}
+```
+
+**Próximo passo sugerido:** investigar por que a cobertura de registro caiu em 2026. É a maior lacuna da base e afeta qualquer comparação entre anos.
+
+```{=latex}
+\vfill
+{\color{cinza}\footnotesize Análise aplicada · Bruna Maitê · dados da Pizzaria do Vitto}
+```

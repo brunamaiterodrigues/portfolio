@@ -1,0 +1,84 @@
+% Cabeçalho visual dos slides — Pizzaria do Vitto
+\usepackage{xcolor}
+\definecolor{navy}{HTML}{0F172A}
+\definecolor{navy2}{HTML}{1E293B}
+\definecolor{violeta}{HTML}{7C3AED}
+\definecolor{cinza}{HTML}{64748B}
+\definecolor{cinzaclaro}{HTML}{E2E8F0}
+
+\setbeamercolor{normal text}{fg=navy}
+\setbeamercolor{structure}{fg=violeta}
+\setbeamercolor{frametitle}{bg=navy, fg=white}
+\setbeamercolor{title}{fg=navy}
+\setbeamercolor{subtitle}{fg=cinza}
+\setbeamercolor{author}{fg=cinza}
+\setbeamercolor{date}{fg=cinza}
+
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamerfont{title}{size=\Huge,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamercolor{itemize item}{fg=violeta}
+\setbeamercolor{itemize subitem}{fg=violeta}
+
+\setbeamertemplate{frametitle}{
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.9ex,dp=1.3ex,leftskip=0.55cm,rightskip=0.55cm]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}
+  \vspace{-0.4pt}
+  {\color{violeta}\rule{\paperwidth}{1.4pt}}
+}
+
+\setbeamertemplate{footline}{
+  \leavevmode
+  \hbox{%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.4ex,dp=1ex,leftskip=0.55cm]{footline}
+      {\color{cinza}\scriptsize Pizzaria do Vitto \textperiodcentered{} Relatório estatístico}
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.4ex,dp=1ex,rightskip=0.55cm]{footline}
+      \hfill{\color{cinza}\scriptsize \insertframenumber\,/\,\inserttotalframenumber}
+    \end{beamercolorbox}%
+  }
+}
+
+\setbeamertemplate{title page}{
+  \vspace*{1.1cm}
+  {\color{violeta}\bfseries\scriptsize PIZZARIA DO VITTO \quad·\quad ANÁLISE APLICADA}\\[6pt]
+  {\color{violeta}\rule{0.42\paperwidth}{2pt}}\\[16pt]
+  {\usebeamerfont{title}\color{navy}\inserttitle}\\[8pt]
+  {\usebeamerfont{subtitle}\color{cinza}\insertsubtitle}\\[22pt]
+  {\color{cinza}\small \insertauthor}\\[2pt]
+  {\color{cinza}\small Novembro de 2026}
+}
+
+\setbeamertemplate{background}{
+  \begin{tikzpicture}
+    \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+    \fill[color=white] (0,0) rectangle(\the\paperwidth,\the\paperheight);
+  \end{tikzpicture}
+}
+
+% Caixas de destaque e de limite
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\newtcolorbox{destaque}{
+  enhanced, colback=violeta!5, colframe=violeta,
+  boxrule=0pt, leftrule=3pt, arc=0pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+  before skip=5pt, after skip=5pt
+}
+\newtcolorbox{nota}{
+  enhanced, colback=black!3, colframe=cinza,
+  boxrule=0pt, leftrule=3pt, arc=0pt,
+  left=8pt, right=8pt, top=4pt, bottom=4pt,
+  before skip=5pt, after skip=5pt,
+  fontupper=\small
+}
+
+\usepackage{booktabs}
+\renewcommand{\arraystretch}{1.18}
+
+\setbeamertemplate{caption}{\insertcaption}

@@ -1,5 +1,6 @@
 # ---- Arquivos grandes ou regeneráveis ----
 *.pdf
+!relatorios/*.pdf
 saidas/*.csv
 saidas/*.json
 
