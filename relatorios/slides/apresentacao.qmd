@@ -51,7 +51,7 @@ Dia sem registro não é dia sem venda. Todas as médias usam apenas os dias com
 \end{nota}
 ```
 
-## Se você ler só esta página
+## Pizzaria do Vitto
 
 ```{=latex}
 \begin{destaque}

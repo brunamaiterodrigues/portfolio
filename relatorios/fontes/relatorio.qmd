@@ -64,7 +64,7 @@ Os números vêm dos registros de venda e foram calculados em R; o método está
 \end{titlepage}
 ```
 
-# Se você ler só esta página
+# Pizzaria do Vitto
 
 **Em 358 dias com registro, a pizzaria faturou R\$ 4,09 milhões e recebeu 21.350 pedidos.** O valor médio por pedido ficou em **R\$ 192**, com faixa provável de **R\$ 189 a R\$ 194**. São quase 50 mil pizzas vendidas no período.
 
@@ -75,12 +75,6 @@ Os números vêm dos registros de venda e foram calculados em R; o método está
 **O cardápio é longo e a concentração é baixa.** São 32 sabores cadastrados, e os 5 mais vendidos somam **24 de cada 100 pizzas**. O primeiro colocado, Especial da Casa, responde por 5 de cada 100 pizzas.
 
 **A comparação entre 2025 e 2026 não mostra mudança relevante.** No mesmo intervalo de calendário, o faturamento por dia registrado variou **-1%**, dentro da faixa provável de -R\$ 589 a +R\$ 369. A diferença pode ser apenas variação normal do movimento.
-
-```{=latex}
-\begin{limite}
-\textbf{\color{navy}O que esta página não diz.} Não há custo na base, então nenhum valor aqui é lucro ou margem. Também não há identificação de cliente, dados de entrega ou estoque. E 222 dias do período não têm registro: não são dias sem venda, apenas dias sem anotação.
-\end{limite}
-```
 
 # O negócio em números
 
